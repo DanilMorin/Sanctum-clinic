@@ -38,3 +38,150 @@
 - показанные альтернативы;
 - показанный профессиональный вариант;
 - источник запуска, если тест открыт из Telegram, MAX или сайта.
+
+# Этапы разработки бота
+
+### Этап 1 — Базовый запуск проекта и Telegram-бота
+
+Цель: бот должен запускаться, читать .env, подключаться к Telegram и отвечать на /start.
+
+Что делаем:
+
+- настраиваем env.ts
+- настраиваем logger.ts
+- подключаем telegraf-hardened
+- создаём Telegram bot instance
+- добавляем команду /start
+- добавляем проверку BOT_ENABLED
+- добавляем корректный запуск из src/index.ts
+
+### Этап 2 — Описание доменной модели теста
+
+Цель: создать структуру вопросов, вариантов ответов и правил выбора.
+
+Что делаем:
+
+- quiz.types.ts
+- quiz.constants.ts
+- quiz.rules.ts
+- типы SkinType, SkinFeature, Lifestyle, SpfUsage, ProductFormat
+- список из 5 вопросов
+- правила single/multiple choice
+- правило для «Без особенностей»
+- правило определения priorityFeature
+
+### Этап 3 — Prisma-схема и миграция БД
+
+Цель: создать рабочую структуру базы данных.
+
+Что делаем:
+
+- финализируем prisma/schema.prisma
+- создаём модели User, QuizSession, Product, RecommendationRule, RecommendationAlternative
+- запускаем миграцию
+- проверяем таблицы через phpMyAdmin
+
+### Этап 4 — Repository layer
+
+Цель: вынести работу с Prisma в отдельные репозитории.
+
+Что делаем:
+
+- user.repository.ts
+- quiz-session.repository.ts
+- product.repository.ts
+- recommendation-rule.repository.ts
+
+Результат этапа:
+
+Сервисы не обращаются к Prisma напрямую.
+Вся работа с БД идёт через repositories.
+
+### Этап 5 — Бизнес-логика теста
+
+Цель: реализовать основную логику прохождения теста.
+
+Что делаем:
+
+- user.service.ts
+- quiz.service.ts
+- recommendation.service.ts
+- product.service.ts
+- создание пользователя
+- создание quiz session
+- сохранение ответов
+- определение priorityFeature
+- завершение теста
+- получение результата
+
+### Этап 6 — Telegram wizard / текстовый режим
+
+Цель: сделать прохождение теста через Telegram-кнопки.
+
+Что делаем:
+
+- start.command.ts
+- quiz.handler.ts
+- callback.handler.ts
+- quiz.keyboard.ts
+- result.presenter.ts
+- обработка шагов 1–5
+- inline-кнопки
+- мультивыбор на шаге 2
+- кнопка «Далее»
+- вывод результата
+- кнопка «Пройти заново»
+
+Результат этапа:
+Пользователь проходит весь SPF-тест в Telegram без Mini App.
+
+### Этап 7 — Seed данных рекомендаций
+
+Цель: заполнить базу начальными продуктами и правилами подбора.
+
+Что делаем:
+
+- prisma/seed.ts
+- список продуктов
+- правила RecommendationRule
+- альтернативы RecommendationAlternative
+- npm run prisma:seed
+
+### Этап 8 — API для будущего Mini App
+
+Цель: подготовить backend API, который позже будет использовать Mini App.
+
+Что делаем:
+
+- GET /api/quiz/questions
+- POST /api/quiz/sessions
+- PATCH /api/quiz/sessions/:id/answers
+- POST /api/quiz/sessions/:id/complete
+- GET /api/quiz/sessions/:id/result
+- GET /api/products/:id
+
+### Этап 9 — Telegram Mini App
+
+Цель: заменить текстовый режим красивым интерфейсом Mini App.
+
+Что делаем после готовности дизайна:
+
+- создаём frontend в miniapp/
+- подключаем Telegram WebApp SDK
+- получаем initData
+- проверяем авторизацию на backend
+- выводим вопросы
+- отправляем ответы
+- показываем результат
+
+### Этап 10 — Адаптация под MAX
+
+Цель: адаптировать проект под MAX после уточнения платформы.
+
+Что делаем:
+
+- изучаем API/SDK MAX
+- добавляем provider/adaptor
+- используем существующие services и API
+- добавляем maxId в User
+
