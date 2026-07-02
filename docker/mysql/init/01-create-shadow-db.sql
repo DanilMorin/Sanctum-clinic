@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS leadbot_shadow;
+GRANT ALL PRIVILEGES ON leadbot_shadow.* TO 'leadbot'@'%';
+FLUSH PRIVILEGES;
