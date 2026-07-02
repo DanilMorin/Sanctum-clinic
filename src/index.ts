@@ -1,19 +1,36 @@
-import 'dotenv/config';
-import express from 'express';
+import { env } from './config/env.js';
+import { logger } from './lib/logger.js';
+import { startTelegramBot } from './bot/telegram/index.js';
 
-const app = express();
-
-const port = Number(process.env.API_PORT || 3000);
-
-app.use(express.json());
-
-app.get('/health', (_req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'sanctum-clinic',
+async function bootstrap(): Promise<void> {
+  logger.info('Application starting', {
+    apiPort: env.apiPort,
+    botEnabled: env.botEnabled,
   });
-});
 
-app.listen(port, () => {
-  console.log(`API server started on port ${port}`);
+  const telegramBot = await startTelegramBot();
+
+  const shutdown = async (signal: string): Promise<void> => {
+    logger.info(`Received ${signal}. Shutting down...`);
+
+    if (telegramBot) {
+      telegramBot.stop(signal);
+      logger.info('Telegram bot stopped');
+    }
+
+    process.exit(0);
+  };
+
+  process.once('SIGINT', () => {
+    void shutdown('SIGINT');
+  });
+
+  process.once('SIGTERM', () => {
+    void shutdown('SIGTERM');
+  });
+}
+
+bootstrap().catch((error) => {
+  logger.error('Application startup error', error);
+  process.exit(1);
 });
