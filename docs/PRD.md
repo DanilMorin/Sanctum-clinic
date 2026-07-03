@@ -556,19 +556,45 @@ Acceptance criteria:
 
 Goal:
 
-Fill database with SPF products and recommendation rules.
+Fill MySQL with initial SPF products and recommendation rules based on the dermatologist table.
 
 Files:
 
 ```txt
 prisma/seed.ts
-```
+src/bot/telegram/presenters/result.presenter.ts
+src/bot/telegram/handlers/quiz.handler.ts
+Seed includes:
 
-Expected result:
+products;
+recommendation rules;
+alternative products.
 
-```txt
-Bot returns real recommendations from the database.
-```
+Seeder behavior:
+
+1. Deletes old quiz sessions.
+2. Deletes old recommendation alternatives.
+3. Deletes old recommendation rules.
+4. Deletes old products.
+5. Keeps users.
+6. Creates products.
+7. Creates recommendation rules.
+8. Creates alternatives.
+
+Command:
+
+docker compose exec app npm run prisma:seed
+Acceptance criteria:
+
+1. products table is filled.
+2. recommendation_rules table is filled.
+3. recommendation_alternatives table is filled.
+4. Bot completes quiz session after step 5.
+5. Bot returns real recommendation from MySQL.
+6. If multiple skin features are selected, priority feature is used.
+7. Rules with lifestyle = any work as fallback.
+8. phpMyAdmin can be used to inspect and edit seed data.
+9. npm run build passes without TypeScript errors.
 
 ### Stage 8. Mini App API
 
