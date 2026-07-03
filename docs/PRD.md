@@ -451,7 +451,7 @@ Tables are visible in phpMyAdmin.
 
 Goal:
 
-Create database access layer.
+Create a database access layer. Services must not use Prisma directly.
 
 Files:
 
@@ -460,13 +460,20 @@ src/repositories/user.repository.ts
 src/repositories/quiz-session.repository.ts
 src/repositories/product.repository.ts
 src/repositories/recommendation-rule.repository.ts
-```
 
-Expected result:
+Repositories:
 
-```txt
-Services can work with DB through repositories, not directly through Prisma.
-```
+UserRepository — finds and upserts Telegram/MAX users.
+QuizSessionRepository — creates quiz sessions, saves answers, completes sessions, finds active/latest sessions.
+ProductRepository — reads SPF product data.
+RecommendationRuleRepository — finds matching recommendation rules by skinType + priorityFeature + lifestyle, with fallback to lifestyle = any.
+
+Acceptance criteria:
+
+1. All repository files are implemented.
+2. Repositories import Prisma only from src/lib/prisma.ts.
+3. Services will be able to work with repositories instead of Prisma.
+4. npm run build passes without TypeScript errors.
 
 ### Stage 5. Services
 
