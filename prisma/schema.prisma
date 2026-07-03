@@ -8,11 +8,6 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-enum UserProvider {
-  telegram
-  max
-}
-
 enum QuizSessionStatus {
   started
   completed
@@ -57,23 +52,30 @@ enum ProductCategory {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  telegramId String?  @unique
-  maxId      String?  @unique
-  username   String?
-  firstName  String?
-  lastName   String?
+  id Int @id @default(autoincrement())
+
+  telegramId String? @unique
+  maxId      String? @unique
+
+  username  String?
+  firstName String?
+  lastName  String?
 
   quizSessions QuizSession[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
 model QuizSession {
-  id        Int               @id @default(autoincrement())
-  userId    Int
-  status    QuizSessionStatus @default(started)
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status QuizSessionStatus @default(started)
 
   skinType        SkinType?
   skinFeatures    Json?
@@ -83,6 +85,7 @@ model QuizSession {
   productFormat   ProductFormat?
 
   recommendationRuleId Int?
+  recommendationRule   RecommendationRule? @relation(fields: [recommendationRuleId], references: [id], onDelete: SetNull)
 
   startedAt   DateTime  @default(now())
   completedAt DateTime?
@@ -90,21 +93,26 @@ model QuizSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recommendationRule RecommendationRule? @relation(fields: [recommendationRuleId], references: [id])
+  @@index([userId])
+  @@index([status])
+  @@index([recommendationRuleId])
+  @@map("quiz_sessions")
 }
 
 model Product {
-  id             Int             @id @default(autoincrement())
-  name           String
-  brand          String?
-  category       ProductCategory
-  spf            String?
-  texture        String?
-  isMakeupBase   Boolean?
-  description    String?         @db.Text
-  doctorComment  String?         @db.Text
-  imageUrl       String?
+  id Int @id @default(autoincrement())
+
+  name     String
+  brand    String?
+  category ProductCategory
+
+  spf          String?
+  texture      String?
+  isMakeupBase Boolean?
+
+  description   String? @db.Text
+  doctorComment String? @db.Text
+  imageUrl      String?
 
   mainForRules         RecommendationRule[] @relation("MainProduct")
   professionalForRules RecommendationRule[] @relation("ProfessionalProduct")
@@ -112,19 +120,23 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@map("products")
 }
 
 model RecommendationRule {
-  id              Int         @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   skinType        SkinType
   priorityFeature SkinFeature
   lifestyle       Lifestyle
 
-  mainProductId         Int?
-  professionalProductId Int?
+  mainProductId Int?
+  mainProduct   Product? @relation("MainProduct", fields: [mainProductId], references: [id], onDelete: SetNull)
 
-  mainProduct         Product? @relation("MainProduct", fields: [mainProductId], references: [id])
-  professionalProduct Product? @relation("ProfessionalProduct", fields: [professionalProductId], references: [id])
+  professionalProductId Int?
+  professionalProduct   Product? @relation("ProfessionalProduct", fields: [professionalProductId], references: [id], onDelete: SetNull)
 
   alternatives RecommendationAlternative[]
   quizSessions QuizSession[]
@@ -132,20 +144,27 @@ model RecommendationRule {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([skinType, priorityFeature, lifestyle])
+  @@index([mainProductId])
+  @@index([professionalProductId])
+  @@unique([skinType, priorityFeature, lifestyle])
+  @@map("recommendation_rules")
 }
 
 model RecommendationAlternative {
-  id                   Int @id @default(autoincrement())
-  recommendationRuleId Int
-  productId            Int
-  sortOrder            Int @default(0)
+  id Int @id @default(autoincrement())
 
-  recommendationRule RecommendationRule @relation(fields: [recommendationRuleId], references: [id], onDelete: Cascade)
-  product            Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  recommendationRuleId Int
+  recommendationRule   RecommendationRule @relation(fields: [recommendationRuleId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  sortOrder Int @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([recommendationRuleId, productId])
+  @@index([productId])
+  @@map("recommendation_alternatives")
 }
