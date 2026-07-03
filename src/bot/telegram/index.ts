@@ -2,15 +2,27 @@ import { Telegraf } from 'telegraf-hardened';
 
 import { env } from '../../config/env.js';
 import { logger } from '../../lib/logger.js';
-import { handleStartCommand } from './commands/start.command.js';
-import { registerQuizHandlers } from './handlers/quiz.handler.js';
+import {
+  handleStartCommand,
+  START_QUIZ_CALLBACK,
+} from './commands/start.command.js';
 
 export function createTelegramBot(): Telegraf {
   const bot = new Telegraf(env.botToken);
 
   bot.start(handleStartCommand);
 
-  registerQuizHandlers(bot);
+  bot.action(START_QUIZ_CALLBACK, async (ctx) => {
+    await ctx.answerCbQuery();
+
+    await ctx.reply(
+      [
+        'Тест скоро начнётся.',
+        '',
+        'На следующем этапе мы добавим вопросы и пошаговую логику подбора SPF.',
+      ].join('\n'),
+    );
+  });
 
   bot.catch((error) => {
     logger.error('Telegram bot error', error);
