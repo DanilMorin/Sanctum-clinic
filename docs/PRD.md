@@ -479,7 +479,7 @@ Acceptance criteria:
 
 Goal:
 
-Implement business logic.
+Implement business logic layer. Services must not depend on Telegram handlers or API controllers.
 
 Files:
 
@@ -488,13 +488,24 @@ src/services/user.service.ts
 src/services/quiz.service.ts
 src/services/recommendation.service.ts
 src/services/product.service.ts
-```
+Important rules:
 
-Expected result:
+Services can use repositories.
+Services must not use Telegram-specific objects.
+Services must not receive ctx from Telegraf.
+Services must not contain UI text for Telegram.
+Recommendation calculation must be testable without Telegram.
 
-```txt
-The quiz can be created, answered, completed, and calculated without Telegram-specific logic.
-```
+Acceptance criteria:
+
+1. UserService can upsert Telegram user.
+2. QuizService can start a quiz session.
+3. QuizService can save all 5 answers.
+4. QuizService can complete a quiz session.
+5. RecommendationService can find a matching rule by skinType + priorityFeature + lifestyle.
+6. RecommendationService falls back to lifestyle = any through repository.
+7. RecommendationService filters result by productFormat.
+8. npm run build passes without TypeScript errors.
 
 ### Stage 6. Telegram Text/Button Quiz
 
