@@ -1,3 +1,4 @@
+import { startApiServer } from './api/index.js';
 import { env } from './config/env.js';
 import { logger } from './lib/logger.js';
 import { startTelegramBot } from './bot/telegram/index.js';
@@ -7,6 +8,8 @@ async function bootstrap(): Promise<void> {
     apiPort: env.apiPort,
     botEnabled: env.botEnabled,
   });
+
+  startApiServer();
 
   const telegramBot = await startTelegramBot();
 

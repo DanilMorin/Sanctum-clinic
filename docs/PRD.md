@@ -546,11 +546,15 @@ Expected result:
 Bot returns real recommendations from the database.
 ```
 
-### Stage 8. Mini App API
+### Stage 8. API for Mini App / MAX / Frontend
 
 Goal:
 
-Expose backend endpoints for future Mini App.
+Expose HTTP API that uses the same services as the Telegram bot. This API will be used by the future Telegram Mini App, possible MAX Mini App/Web App, admin panel, or external frontend.
+
+Important:
+
+The API must not duplicate business logic. Controllers should only validate input and call services.
 
 Files:
 
@@ -560,20 +564,43 @@ src/api/routes/quiz.routes.ts
 src/api/routes/product.routes.ts
 src/api/controllers/quiz.controller.ts
 src/api/controllers/product.controller.ts
+src/api/middlewares/error.middleware.ts
+src/api/middlewares/telegram-auth.middleware.ts
 src/api/dto/quiz.dto.ts
 src/api/dto/result.dto.ts
-```
+src/index.ts
 
-Expected API:
+Endpoints:
 
-```txt
+GET /health
 GET /api/quiz/questions
 POST /api/quiz/sessions
+GET /api/quiz/sessions/:id
 PATCH /api/quiz/sessions/:id/answers
 POST /api/quiz/sessions/:id/complete
 GET /api/quiz/sessions/:id/result
+GET /api/products
 GET /api/products/:id
-```
+
+Architecture:
+
+Telegram text bot → Services → Repositories → Prisma → MySQL
+
+Mini App → HTTP API → Services → Repositories → Prisma → MySQL
+
+MAX adapter → Services or HTTP API → Repositories → Prisma → MySQL
+
+Acceptance criteria:
+
+1. API server starts together with Telegram bot.
+2. GET /health works.
+3. GET /api/quiz/questions returns quiz questions.
+4. POST /api/quiz/sessions creates a session.
+5. PATCH /api/quiz/sessions/:id/answers saves answers.
+6. POST /api/quiz/sessions/:id/complete completes quiz and returns recommendation.
+7. GET /api/products returns products from database.
+8. API uses services, not Prisma directly.
+9. npm run build passes without TypeScript errors.
 
 ### Stage 9. Telegram Mini App
 
