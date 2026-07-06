@@ -9,6 +9,7 @@ saveProductFormat() — сохраняет формат продукта;
 completeQuizSession() — завершает тест и рассчитывает рекомендацию.
 */ 
 import type { QuizSession } from '@prisma/client';
+
 import {
   completeQuizAnswers,
   getPrioritySkinFeature,
@@ -28,7 +29,21 @@ import {
   type RecommendationResult,
 } from './recommendation.service.js';
 
+export interface SaveQuizAnswersInput {
+  skinType?: SkinType;
+  skinFeatures?: SkinFeature[];
+  lifestyle?: Lifestyle;
+  spfUsage?: SpfUsage;
+  productFormat?: ProductFormat;
+}
+
 export interface CompleteQuizSessionResult {
+  session: QuizSession;
+  answers: CompletedQuizAnswers;
+  recommendation: RecommendationResult;
+}
+
+export interface QuizResult {
   session: QuizSession;
   answers: CompletedQuizAnswers;
   recommendation: RecommendationResult;
@@ -57,11 +72,27 @@ export class QuizService {
     return quizSessionRepository.findLatestStartedByUserId(userId);
   }
 
+  async saveAnswers(
+    sessionId: number,
+    input: SaveQuizAnswersInput,
+  ): Promise<QuizSession> {
+    return quizSessionRepository.updateAnswers(sessionId, {
+      skinType: input.skinType,
+      skinFeatures: input.skinFeatures,
+      priorityFeature: input.skinFeatures
+        ? getPrioritySkinFeature(input.skinFeatures)
+        : undefined,
+      lifestyle: input.lifestyle,
+      spfUsage: input.spfUsage,
+      productFormat: input.productFormat,
+    });
+  }
+
   async saveSkinType(
     sessionId: number,
     skinType: SkinType,
   ): Promise<QuizSession> {
-    return quizSessionRepository.updateAnswers(sessionId, {
+    return this.saveAnswers(sessionId, {
       skinType,
     });
   }
@@ -70,9 +101,8 @@ export class QuizService {
     sessionId: number,
     skinFeatures: SkinFeature[],
   ): Promise<QuizSession> {
-    return quizSessionRepository.updateAnswers(sessionId, {
+    return this.saveAnswers(sessionId, {
       skinFeatures,
-      priorityFeature: getPrioritySkinFeature(skinFeatures),
     });
   }
 
@@ -80,7 +110,7 @@ export class QuizService {
     sessionId: number,
     lifestyle: Lifestyle,
   ): Promise<QuizSession> {
-    return quizSessionRepository.updateAnswers(sessionId, {
+    return this.saveAnswers(sessionId, {
       lifestyle,
     });
   }
@@ -89,7 +119,7 @@ export class QuizService {
     sessionId: number,
     spfUsage: SpfUsage,
   ): Promise<QuizSession> {
-    return quizSessionRepository.updateAnswers(sessionId, {
+    return this.saveAnswers(sessionId, {
       spfUsage,
     });
   }
@@ -98,30 +128,43 @@ export class QuizService {
     sessionId: number,
     productFormat: ProductFormat,
   ): Promise<QuizSession> {
-    return quizSessionRepository.updateAnswers(sessionId, {
+    return this.saveAnswers(sessionId, {
       productFormat,
     });
+  }
+
+  async getQuizResult(sessionId: number): Promise<QuizResult> {
+    const session = await this.getSessionById(sessionId);
+    const answers = this.getCompletedAnswersFromSession(session);
+    const recommendation = await recommendationService.calculateResult(answers);
+
+    return {
+      session,
+      answers,
+      recommendation,
+    };
   }
 
   async completeQuizSession(
     sessionId: number,
   ): Promise<CompleteQuizSessionResult> {
-    const session = await this.getSessionById(sessionId);
-    const answers = this.mapSessionToQuizAnswers(session);
-    const completedAnswers = completeQuizAnswers(answers);
-
-    const recommendation =
-      await recommendationService.calculateResult(completedAnswers);
+    const result = await this.getQuizResult(sessionId);
 
     const completedSession = await quizSessionRepository.complete(sessionId, {
-      recommendationRuleId: recommendation.ruleId,
+      recommendationRuleId: result.recommendation.ruleId,
     });
 
     return {
       session: completedSession,
-      answers: completedAnswers,
-      recommendation,
+      answers: result.answers,
+      recommendation: result.recommendation,
     };
+  }
+
+  getCompletedAnswersFromSession(session: QuizSession): CompletedQuizAnswers {
+    const answers = this.mapSessionToQuizAnswers(session);
+
+    return completeQuizAnswers(answers);
   }
 
   private mapSessionToQuizAnswers(session: QuizSession): QuizAnswers {
