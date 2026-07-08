@@ -1,4 +1,6 @@
+import cors from 'cors';
 import express from 'express';
+
 import { env } from '../config/env.js';
 import { logger } from '../lib/logger.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
@@ -7,6 +9,13 @@ import { quizRouter } from './routes/quiz.routes.js';
 
 export function createApiServer() {
   const app = express();
+
+  app.use(
+    cors({
+      origin: true,
+      credentials: true,
+    }),
+  );
 
   app.use(express.json());
 
@@ -34,3 +43,4 @@ export function startApiServer(): void {
     });
   });
 }
+
