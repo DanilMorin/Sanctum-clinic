@@ -511,7 +511,7 @@ Acceptance criteria:
 
 Goal:
 
-Implement full quiz flow inside Telegram.
+Implement the full 5-step quiz flow in Telegram using inline buttons.
 
 Files:
 
@@ -520,31 +520,81 @@ src/bot/telegram/handlers/quiz.handler.ts
 src/bot/telegram/handlers/callback.handler.ts
 src/bot/telegram/keyboards/quiz.keyboard.ts
 src/bot/telegram/presenters/result.presenter.ts
-```
+src/bot/telegram/index.ts
 
-Expected result:
+Flow:
 
-```txt
-User can complete all 5 steps in Telegram and receive a recommendation.
-```
+/start
+→ welcome message
+→ "Начать подбор"
+→ Step 1: skin type
+→ Step 2: skin features with multiple choice
+→ Step 3: lifestyle
+→ Step 4: SPF usage
+→ Step 5: product format
+→ temporary profile result
+
+Important:
+
+At this stage, the database seed with real products and recommendation rules is not implemented yet. Therefore, after the final step the bot shows a temporary saved user profile instead of a real SPF recommendation.
+
+Acceptance criteria:
+
+1. User can start the quiz from Telegram.
+2. User is saved to the users table.
+3. New quiz session is created.
+4. User can answer all 5 questions.
+5. Step 2 supports multiple selection.
+6. "Без особенностей" clears other selected features.
+7. Selecting any other feature clears "Без особенностей".
+8. Answers are saved to quiz_sessions.
+9. Temporary result is shown after step 5.
+10. "Пройти заново" starts a new quiz session.
+11. npm run build passes without TypeScript errors.
 
 ### Stage 7. Seed Data
 
 Goal:
 
-Fill database with SPF products and recommendation rules.
+Fill MySQL with initial SPF products and recommendation rules based on the dermatologist table.
 
 Files:
 
 ```txt
 prisma/seed.ts
-```
+src/bot/telegram/presenters/result.presenter.ts
+src/bot/telegram/handlers/quiz.handler.ts
+Seed includes:
 
-Expected result:
+products;
+recommendation rules;
+alternative products.
 
-```txt
-Bot returns real recommendations from the database.
-```
+Seeder behavior:
+
+1. Deletes old quiz sessions.
+2. Deletes old recommendation alternatives.
+3. Deletes old recommendation rules.
+4. Deletes old products.
+5. Keeps users.
+6. Creates products.
+7. Creates recommendation rules.
+8. Creates alternatives.
+
+Command:
+
+docker compose exec app npm run prisma:seed
+Acceptance criteria:
+
+1. products table is filled.
+2. recommendation_rules table is filled.
+3. recommendation_alternatives table is filled.
+4. Bot completes quiz session after step 5.
+5. Bot returns real recommendation from MySQL.
+6. If multiple skin features are selected, priority feature is used.
+7. Rules with lifestyle = any work as fallback.
+8. phpMyAdmin can be used to inspect and edit seed data.
+9. npm run build passes without TypeScript errors.
 
 ### Stage 8. API for Mini App / MAX / Frontend
 
