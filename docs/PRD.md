@@ -736,17 +736,89 @@ Important:
 
 This is not final frontend implementation. Final design will replace miniapp/index.html and miniapp/assets/styles.css later.
 
-### Stage 10. Import Real Recommendation Data
+### Stage 10. Import SPF Data From Excel
 
 Goal:
 
-Load real SPF recommendation data from exported Google Sheets files into MySQL.
+Import real SPF recommendation data from Excel into MySQL.
 
-Current source files:
+Source file:
 
 ```txt
-data/recommendations.html
-data/interface-texts.html
+data/spf.xlsx
+Source sheet:
+
+Вопросы и логика
+
+The importer reads rows from Excel and fills:
+
+products
+recommendation_rules
+recommendation_alternatives
+
+Command:
+
+docker compose exec app npm run import:spf
+
+Files:
+
+src/scripts/import-spf-from-excel.ts
+data/spf.xlsx
+package.json
+
+Mapping:
+
+Тип кожи → skinType
+Особенность → priorityFeature
+Образ жизни → lifestyle
+
+Основная рекомендация → mainProduct
+Альтернатива 1/2/3 → recommendation_alternatives
+Проф. вариант → professionalProduct
+
+Enum mapping:
+
+Жирная → oily
+Комбинированная → combination
+Сухая → dry
+
+Без особенностей → none
+Акне / высыпания → acne
+Розацеа → rosacea
+Купероз → couperose
+Пигментация → pigmentation
+Чувствительная / раздражённая → sensitive
+
+Обычный → normal
+Активный → active
+Любой → any
+
+Да → true
+Нет → false
+
+Acceptance criteria:
+
+1. Excel file is located at data/spf.xlsx.
+2. npm package xlsx is installed.
+3. npm run import:spf imports data successfully.
+4. products table contains real product data.
+5. recommendation_rules table contains real quiz matching rules.
+6. recommendation_alternatives table contains alternative products.
+7. Re-running import does not require manual DB cleanup.
+8. Telegram bot returns real recommendations from imported data.
+9. Mini App returns real recommendations from imported data.
+10. npm run build passes without TypeScript errors.
+
+---
+
+После того как импорт сработает, напиши, сколько вывело:
+
+```txt
+Products:
+Recommendation rules:
+Alternatives:
+
+
 
 ### Stage 11. MAX Adaptation
 
