@@ -652,25 +652,103 @@ Acceptance criteria:
 8. API uses services, not Prisma directly.
 9. npm run build passes without TypeScript errors.
 
-### Stage 9. Telegram Mini App
+### Stage 9. Telegram Mini App Preparation
 
 Goal:
 
-Build frontend after design is ready.
+Prepare a simple Telegram Mini App frontend structure for the SPF quiz. The final design is not ready yet, so the current implementation is a lightweight technical prototype.
 
-Location:
+The Mini App should be easy to replace with final layout later.
 
-```txt
-miniapp/
-```
-
-Expected result:
+Files:
 
 ```txt
-The user completes the quiz through Telegram Mini App.
-```
+miniapp/index.html
+miniapp/assets/styles.css
+miniapp/assets/api.js
+miniapp/assets/telegram.js
+miniapp/assets/app.js
+docs/MINI_APP.md
+docs/LOCAL_HTTPS_TUNNEL.md
+docs/MAX_RESEARCH.md
+src/api/index.ts
+src/bot/telegram/commands/start.command.ts
 
-### Stage 10. MAX Adaptation
+Mini App screens:
+
+Screen 1: Welcome screen
+Screen 2: Quiz screen with 5 questions
+Screen 3: Result screen
+
+Frontend requirements:
+1. Use simple static HTML/CSS/JS.
+2. Do not use React/Vue/Vite at this stage.
+3. Do not duplicate backend recommendation logic.
+4. Get questions from API.
+5. Create quiz session through API.
+6. Save answers through API.
+7. Complete quiz through API.
+8. Show result received from API.
+9. Use Telegram WebApp SDK.
+10. Support local development fallback user outside Telegram.
+
+API used by Mini App:
+
+GET /api/quiz/questions
+POST /api/quiz/sessions
+PATCH /api/quiz/sessions/:id/answers
+POST /api/quiz/sessions/:id/complete
+
+Telegram integration:
+
+/start
+→ "Открыть Mini App" button
+→ opens WEB_APP_URL from .env
+Local development:
+
+Telegram requires HTTPS for Mini Apps. For local development use HTTPS tunnel:
+
+Telegram → HTTPS tunnel → localhost:3000 → Express → /miniapp
+
+Recommended tools:
+
+ngrok
+localtunnel
+
+Environment variable:
+
+WEB_APP_URL=https://your-tunnel-url/miniapp
+
+Acceptance criteria:
+
+1. Mini App opens locally at /miniapp.
+2. Mini App opens through HTTPS tunnel.
+3. Telegram bot has button "Открыть Mini App".
+4. Mini App receives questions from API.
+5. Mini App creates quiz session.
+6. Mini App saves answers.
+7. Mini App completes quiz.
+8. Mini App shows recommendation result.
+9. Telegram text quiz still works.
+10. npm run build passes without TypeScript errors.
+
+Important:
+
+This is not final frontend implementation. Final design will replace miniapp/index.html and miniapp/assets/styles.css later.
+
+### Stage 10. Import Real Recommendation Data
+
+Goal:
+
+Load real SPF recommendation data from exported Google Sheets files into MySQL.
+
+Current source files:
+
+```txt
+data/recommendations.html
+data/interface-texts.html
+
+### Stage 11. MAX Adaptation
 
 Goal:
 

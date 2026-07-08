@@ -13,7 +13,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "import:spf": "tsx src/scripts/import-spf-from-excel.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -21,6 +22,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "telegraf-hardened": "^6.0.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.24.1"
   },
   "devDependencies": {
