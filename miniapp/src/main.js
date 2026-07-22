@@ -5,7 +5,11 @@ import {
   updateQuizAnswers,
 } from './api.js';
 import { getCurrentUser, initPlatform } from './platform.js';
-import './styles.scss';
+import startImageUrl from './assets/img/start-image.png';
+import logoUrl from './assets/img/logo.svg';
+import arrowIconUrl from './assets/img/arrow-icon.svg';
+import arrowIconLightUrl from './assets/img/arrow-icon-light.svg';
+import './assets/scss/styles.scss';
 
 const app = document.querySelector('#app');
 
@@ -188,26 +192,33 @@ function goBack() {
   });
 }
 
+// 0 — welcome page
 function renderWelcomeScreen() {
   app.innerHTML = `
-    <section class="screen screen--center">
-      <div class="card welcome-card">
-        <div class="dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+    <!-- 0 — welcome page -->
+    <section class="screen welcome">
+      <img class="welcome__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
 
-        <h1>Подберём ваш идеальный SPF</h1>
+      <h1 class="welcome__title">
+        SPF-тест<br />
+        для подбора<br />
+        солнцезащитного<br />
+        средства
+      </h1>
 
-        <p>
-          Ответьте на 5 коротких вопросов — и получите персональную рекомендацию,
-          подобранную с учётом особенностей вашей кожи.
-        </p>
+      <p class="welcome__description">
+        Ответьте на 5 коротких вопросов — и получите<br />
+        персональную рекомендацию, подобранную<br />
+        с учётом особенностей вашей кожи
+      </p>
 
-        <button class="button button--primary" id="start-button">
-          Начать подбор
-        </button>
+      <button class="welcome__start" id="start-button" type="button">
+        <span>Начать</span>
+        <img src="${arrowIconUrl}" alt="" width="24" height="24" aria-hidden="true" />
+      </button>
+
+      <div class="welcome__image-section" aria-hidden="true">
+        <img class="welcome__image" src="${startImageUrl}" alt="" width="461" height="558" />
       </div>
     </section>
   `;
@@ -215,10 +226,15 @@ function renderWelcomeScreen() {
   document.querySelector('#start-button').addEventListener('click', startTest);
 }
 
+// 1 — skin type page (first question state)
 function renderQuestionScreen() {
   const question = getCurrentQuestion();
   const field = answerFieldByQuestionId[question.id];
   const selectedValue = state.answers[field];
+  const isAnswered = isCurrentQuestionAnswered();
+  const stepperProgress = state.questions.length > 1
+    ? (state.currentStepIndex / (state.questions.length - 1)) * 100
+    : 0;
 
   const optionsHtml = question.options
     .map((option) => {
@@ -232,12 +248,12 @@ function renderQuestionScreen() {
           data-value="${option.value}"
           type="button"
         >
-          <span class="option__marker"></span>
-          <span>
-            <strong>${option.label}</strong>
+          <span class="option__marker" aria-hidden="true"></span>
+          <span class="option__copy">
+            <strong class="option__label">${option.label}</strong>
             ${
               option.description
-                ? `<small>${option.description}</small>`
+                ? `<small class="option__description">${option.description}</small>`
                 : ''
             }
           </span>
@@ -247,52 +263,60 @@ function renderQuestionScreen() {
     .join('');
 
   app.innerHTML = `
-    <section class="screen">
-      <div class="quiz">
-        <div class="progress-labels">
+    <!-- 1 — skin type page -->
+    <section class="screen question-page">
+      <img class="question-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
+
+      <div class="stepper" aria-label="Шаг ${state.currentStepIndex + 1} из ${state.questions.length}">
+        <div class="stepper__row">
+          <span class="stepper__track" aria-hidden="true">
+            <span class="stepper__fill" style="width: ${stepperProgress}%"></span>
+          </span>
+
           ${state.questions
             .map(
               (item, index) => `
-                <span class="${index === state.currentStepIndex ? 'active' : ''}">
-                  ${item.progressLabel}
+                <span
+                  class="stepper__step ${index === state.currentStepIndex ? 'stepper__step--active' : ''}"
+                  aria-current="${index === state.currentStepIndex ? 'step' : 'false'}"
+                >
+                  ${index + 1}
                 </span>
               `,
             )
             .join('')}
         </div>
-
-        <div class="progress">
-          <div class="progress__bar" style="width: ${getProgressPercent()}%"></div>
-        </div>
-
-        <h2>${question.title}</h2>
-        <p class="question-hint">Выберите ${isMultipleQuestion(question) ? 'один или несколько вариантов' : 'один вариант'}</p>
-
-        <div class="options">
-          ${optionsHtml}
-        </div>
-
-        ${
-          state.error
-            ? `<p class="error">${state.error}</p>`
-            : ''
-        }
-
-        <div class="actions">
-          <button class="button button--ghost" id="back-button" type="button">
-            ← Назад
-          </button>
-
-          <button
-            class="button button--primary"
-            id="next-button"
-            type="button"
-            ${!isCurrentQuestionAnswered() || state.loading ? 'disabled' : ''}
-          >
-            ${state.loading ? 'Загрузка...' : 'Далее'}
-          </button>
-        </div>
+        <p class="stepper__label">${question.progressLabel}</p>
       </div>
+
+      <div class="question-copy">
+        <h1 class="question-copy__title">${question.title}</h1>
+        <p class="question-copy__hint">Выберите ${isMultipleQuestion(question) ? 'один или несколько вариантов' : 'один вариант'}</p>
+      </div>
+
+      <div class="options">
+        ${optionsHtml}
+      </div>
+
+      ${state.error ? `<p class="error">${state.error}</p>` : ''}
+
+      <div class="question-page__spacer"></div>
+
+      <nav class="question-actions" aria-label="Навигация по тесту">
+        <button class="question-actions__back" id="back-button" type="button" aria-label="Назад">
+          <img src="${arrowIconLightUrl}" alt="" width="24" height="24" aria-hidden="true" />
+        </button>
+
+        <button
+          class="question-actions__next"
+          id="next-button"
+          type="button"
+          ${!isAnswered || state.loading ? 'disabled' : ''}
+        >
+          <span>${state.loading ? 'Загрузка...' : 'Далее'}</span>
+          <img src="${isAnswered ? arrowIconUrl : arrowIconLightUrl}" alt="" width="24" height="24" aria-hidden="true" />
+        </button>
+      </nav>
     </section>
   `;
 
