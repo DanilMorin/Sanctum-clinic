@@ -5,7 +5,12 @@ import {
   updateQuizAnswers,
 } from './api.js';
 import { getCurrentUser, initPlatform } from './platform.js';
-import './styles.css';
+import startImageUrl from './assets/img/start-image.png';
+import finalImageUrl from './assets/img/final-image.png';
+import logoUrl from './assets/img/logo.svg';
+import arrowIconUrl from './assets/img/arrow-icon.svg';
+import arrowIconLightUrl from './assets/img/arrow-icon-light.svg';
+import './assets/scss/styles.scss';
 
 const app = document.querySelector('#app');
 
@@ -21,6 +26,8 @@ const state = {
     productFormat: undefined,
   },
   result: null,
+  showCleansingGuide: false,
+  showFinalPage: false,
   loading: false,
   error: null,
 };
@@ -32,6 +39,53 @@ const answerFieldByQuestionId = {
   spf_usage: 'spfUsage',
   product_format: 'productFormat',
 };
+
+const resultProfileLabels = {
+  skinType: {
+    oily: 'Жирная кожа',
+    combination: 'Комбинированная кожа',
+    dry: 'Сухая кожа',
+  },
+  skinFeatures: {
+    acne: 'Акне / высыпания',
+    rosacea: 'Розацеа',
+    couperose: 'Купероз',
+    pigmentation: 'Пигментация',
+    sensitive: 'Чувствительная кожа',
+    none: 'Без особенностей',
+  },
+  lifestyle: {
+    active: 'Активный ритм',
+    normal: 'Обычный ритм',
+  },
+  spfUsage: {
+    makeup_base: 'Под макияж',
+    standalone: 'Самостоятельный уход',
+  },
+  productFormat: {
+    pharmacy: 'Рассмотрю аптечные варианты',
+    professional: 'Рассмотрю профессиональные варианты',
+    both: 'Рассмотрю аптечные и профессиональные варианты',
+  },
+};
+
+function getResultProfileTags(answers) {
+  const featureTags = answers.skinFeatures.map(
+    (feature) => resultProfileLabels.skinFeatures[feature],
+  );
+
+  return [
+    resultProfileLabels.skinType[answers.skinType],
+    ...featureTags,
+    resultProfileLabels.lifestyle[answers.lifestyle],
+    resultProfileLabels.spfUsage[answers.spfUsage],
+    resultProfileLabels.productFormat[answers.productFormat],
+  ].filter(Boolean);
+}
+
+function formatSpfLabel(spf) {
+  return spf?.replace(/SPF\s*(\d+)/i, 'SPF $1');
+}
 
 function setState(patch) {
   Object.assign(state, patch);
@@ -94,6 +148,8 @@ async function startTest() {
       error: null,
       currentStepIndex: 0,
       result: null,
+      showCleansingGuide: false,
+      showFinalPage: false,
       answers: {
         skinType: undefined,
         skinFeatures: [],
@@ -188,26 +244,33 @@ function goBack() {
   });
 }
 
+// 0 — welcome page
 function renderWelcomeScreen() {
   app.innerHTML = `
-    <section class="screen screen--center">
-      <div class="card welcome-card">
-        <div class="dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+    <!-- 0 — welcome page -->
+    <section class="screen welcome">
+      <img class="welcome__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
 
-        <h1>Подберём ваш идеальный SPF</h1>
+      <h1 class="welcome__title">
+        SPF-тест<br />
+        для подбора<br />
+        солнцезащитного<br />
+        средства
+      </h1>
 
-        <p>
-          Ответьте на 5 коротких вопросов — и получите персональную рекомендацию,
-          подобранную с учётом особенностей вашей кожи.
-        </p>
+      <p class="welcome__description">
+        Ответьте на 5 коротких вопросов — и получите<br />
+        персональную рекомендацию, подобранную<br />
+        с учётом особенностей вашей кожи
+      </p>
 
-        <button class="button button--primary" id="start-button">
-          Начать подбор
-        </button>
+      <button class="welcome__start" id="start-button" type="button">
+        <span>Начать</span>
+        <img src="${arrowIconUrl}" alt="" width="24" height="24" aria-hidden="true" />
+      </button>
+
+      <div class="welcome__image-section" aria-hidden="true">
+        <img class="welcome__image" src="${startImageUrl}" alt="" width="461" height="558" />
       </div>
     </section>
   `;
@@ -215,10 +278,15 @@ function renderWelcomeScreen() {
   document.querySelector('#start-button').addEventListener('click', startTest);
 }
 
+// 1 — skin type page (first question state)
 function renderQuestionScreen() {
   const question = getCurrentQuestion();
   const field = answerFieldByQuestionId[question.id];
   const selectedValue = state.answers[field];
+  const isAnswered = isCurrentQuestionAnswered();
+  const stepperProgress = state.questions.length > 1
+    ? (state.currentStepIndex / (state.questions.length - 1)) * 100
+    : 0;
 
   const optionsHtml = question.options
     .map((option) => {
@@ -232,12 +300,12 @@ function renderQuestionScreen() {
           data-value="${option.value}"
           type="button"
         >
-          <span class="option__marker"></span>
-          <span>
-            <strong>${option.label}</strong>
+          <span class="option__marker" aria-hidden="true"></span>
+          <span class="option__copy">
+            <strong class="option__label">${option.label}</strong>
             ${
               option.description
-                ? `<small>${option.description}</small>`
+                ? `<small class="option__description">${option.description}</small>`
                 : ''
             }
           </span>
@@ -247,52 +315,60 @@ function renderQuestionScreen() {
     .join('');
 
   app.innerHTML = `
-    <section class="screen">
-      <div class="quiz">
-        <div class="progress-labels">
+    <!-- 1 — skin type page -->
+    <section class="screen question-page">
+      <img class="question-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
+
+      <div class="stepper" aria-label="Шаг ${state.currentStepIndex + 1} из ${state.questions.length}">
+        <div class="stepper__row">
+          <span class="stepper__track" aria-hidden="true">
+            <span class="stepper__fill" style="width: ${stepperProgress}%"></span>
+          </span>
+
           ${state.questions
             .map(
               (item, index) => `
-                <span class="${index === state.currentStepIndex ? 'active' : ''}">
-                  ${item.progressLabel}
+                <span
+                  class="stepper__step ${index === state.currentStepIndex ? 'stepper__step--active' : ''}"
+                  aria-current="${index === state.currentStepIndex ? 'step' : 'false'}"
+                >
+                  ${index + 1}
                 </span>
               `,
             )
             .join('')}
         </div>
-
-        <div class="progress">
-          <div class="progress__bar" style="width: ${getProgressPercent()}%"></div>
-        </div>
-
-        <h2>${question.title}</h2>
-        <p class="question-hint">Выберите ${isMultipleQuestion(question) ? 'один или несколько вариантов' : 'один вариант'}</p>
-
-        <div class="options">
-          ${optionsHtml}
-        </div>
-
-        ${
-          state.error
-            ? `<p class="error">${state.error}</p>`
-            : ''
-        }
-
-        <div class="actions">
-          <button class="button button--ghost" id="back-button" type="button">
-            ← Назад
-          </button>
-
-          <button
-            class="button button--primary"
-            id="next-button"
-            type="button"
-            ${!isCurrentQuestionAnswered() || state.loading ? 'disabled' : ''}
-          >
-            ${state.loading ? 'Загрузка...' : 'Далее'}
-          </button>
-        </div>
+        <p class="stepper__label">${question.progressLabel}</p>
       </div>
+
+      <div class="question-copy">
+        <h1 class="question-copy__title">${question.title}</h1>
+        <p class="question-copy__hint">Выберите ${isMultipleQuestion(question) ? 'один или несколько вариантов' : 'один вариант'}</p>
+      </div>
+
+      <div class="options">
+        ${optionsHtml}
+      </div>
+
+      ${state.error ? `<p class="error">${state.error}</p>` : ''}
+
+      <div class="question-page__spacer"></div>
+
+      <nav class="question-actions" aria-label="Навигация по тесту">
+        <button class="question-actions__back" id="back-button" type="button" aria-label="Назад">
+          <img src="${arrowIconLightUrl}" alt="" width="24" height="24" aria-hidden="true" />
+        </button>
+
+        <button
+          class="question-actions__next"
+          id="next-button"
+          type="button"
+          ${!isAnswered || state.loading ? 'disabled' : ''}
+        >
+          <span>${state.loading ? 'Загрузка...' : 'Далее'}</span>
+          <img src="${isAnswered ? arrowIconUrl : arrowIconLightUrl}" alt="" width="24" height="24" aria-hidden="true" />
+        </button>
+      </nav>
     </section>
   `;
 
@@ -306,74 +382,221 @@ function renderQuestionScreen() {
   document.querySelector('#back-button').addEventListener('click', goBack);
 }
 
+// 6 — result page
 function renderResultScreen() {
   const result = state.result;
   const recommendation = result.recommendation;
+  const profileTags = getResultProfileTags(result.answers);
+  const priorityFeature = recommendation.priorityFeature;
+  const priorityLabel = resultProfileLabels.skinFeatures[priorityFeature];
+  const mainProduct = recommendation.mainProduct;
+  const professionalProduct = recommendation.professionalProduct;
+  const mainProductTags = mainProduct
+    ? [
+        formatSpfLabel(mainProduct.spf),
+        mainProduct.texture
+          ? `${mainProduct.texture}${mainProduct.texture.toLowerCase().includes('текстур') ? '' : ' текстура'}`
+          : null,
+        mainProduct.isMakeupBase === null
+          ? null
+          : `Под макияж: ${mainProduct.isMakeupBase ? 'да' : 'нет'}`,
+      ].filter(Boolean)
+    : [];
 
   app.innerHTML = `
-    <section class="screen">
-      <div class="card result-card">
-        <h1>Ваш результат</h1>
+    <!-- 6 — result page -->
+    <section class="screen result-page">
+      <img class="result-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
 
-        <p class="muted">
-          Приоритетная особенность:
-          <strong>${result.answers.priorityFeature}</strong>
+      <h1 class="result-page__title">Ваша персональная<br />рекомендация</h1>
+
+      <section class="result-section result-profile">
+        <h2 class="result-section__title">Ваш профиль</h2>
+        <div class="result-tags">
+          ${profileTags.map((tag) => `<span class="result-tag">${tag}</span>`).join('')}
+        </div>
+        <p class="result-profile__note">
+          ${
+            priorityFeature === 'none'
+              ? 'Подбор выполнен без дополнительного приоритета:<br />особенности кожи не отмечены.'
+              : `Приоритет подбора: ${priorityLabel}.`
+          }
         </p>
+      </section>
 
-        ${
-          recommendation.mainProduct
-            ? `
-              <article class="product-card">
-                <h2>Основная рекомендация</h2>
-                <strong>${recommendation.mainProduct.name}</strong>
-                <p>${recommendation.mainProduct.brand || ''}</p>
-                <p>${recommendation.mainProduct.spf || ''}</p>
-              </article>
-            `
-            : ''
-        }
+      ${
+        mainProduct
+          ? `
+            <article class="result-section result-section--divided result-product">
+              <h2 class="result-section__title">Основная рекомендация</h2>
+              <h3 class="result-product__name">${mainProduct.name}</h3>
+              ${
+                mainProductTags.length
+                  ? `<div class="result-tags">${mainProductTags.map((tag) => `<span class="result-tag">${tag}</span>`).join('')}</div>`
+                  : ''
+              }
+              ${mainProduct.description ? `<p class="result-product__description">${mainProduct.description}</p>` : ''}
+            </article>
+          `
+          : ''
+      }
 
-        ${
-          recommendation.alternatives.length
-            ? `
-              <article class="product-card">
-                <h2>Также подходят</h2>
-                <ul>
-                  ${recommendation.alternatives
-                    .map((product) => `<li>${product.name}</li>`)
-                    .join('')}
-                </ul>
-              </article>
-            `
-            : ''
-        }
+      ${
+        recommendation.alternatives.length
+          ? `
+            <section class="result-section result-section--divided result-alternatives">
+              <h2 class="result-section__title">Также подходят</h2>
+              <div class="result-alternatives__list">
+                ${recommendation.alternatives
+                  .map((product) => `<p>${product.name}</p>`)
+                  .join('')}
+              </div>
+            </section>
+          `
+          : ''
+      }
 
-        ${
-          recommendation.professionalProduct
-            ? `
-              <article class="product-card">
-                <h2>Профессиональный вариант</h2>
-                <strong>${recommendation.professionalProduct.name}</strong>
-                <p>${recommendation.professionalProduct.brand || ''}</p>
-                <p>${recommendation.professionalProduct.spf || ''}</p>
-              </article>
-            `
-            : ''
-        }
+      ${
+        professionalProduct
+          ? `
+            <article class="result-section result-section--divided result-professional">
+              <h2 class="result-section__title">Профессиональный<br />вариант</h2>
+              <h3 class="result-product__name">${professionalProduct.name}</h3>
+              ${
+                professionalProduct.doctorComment || professionalProduct.description
+                  ? `<p class="result-professional__description">${professionalProduct.doctorComment || professionalProduct.description}</p>`
+                  : ''
+              }
+            </article>
+          `
+          : ''
+      }
 
-        <p class="disclaimer">
-          Если вы беременны, кормите грудью или принимаете системные ретиноиды,
-          перед использованием солнцезащитного средства проконсультируйтесь с вашим врачом.
-        </p>
+      <aside class="result-disclaimer">
+        <h2>Важно</h2>
+        <p>Если вы беременны, кормите грудью или принимаете системные ретиноиды, перед использованием SPF проконсультируйтесь с вашим врачом.</p>
+      </aside>
 
-        <button class="button button--primary" id="restart-button">
-          Пройти заново
+      <nav class="result-actions" aria-label="Навигация по результам">
+        <button class="result-actions__back" id="result-back-button" type="button" aria-label="Назад">
+          <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
         </button>
-      </div>
+        <button class="result-actions__guide" id="cleansing-guide-button" type="button">
+          Правильный смыв SPF
+          <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
+        </button>
+      </nav>
     </section>
   `;
 
-  document.querySelector('#restart-button').addEventListener('click', startTest);
+  document.querySelector('#result-back-button').addEventListener('click', () => {
+    setState({
+      result: null,
+      currentStepIndex: Math.max(state.questions.length - 1, 0),
+    });
+  });
+
+  document.querySelector('#cleansing-guide-button').addEventListener('click', () => {
+    setState({ showCleansingGuide: true });
+  });
+}
+
+// 7 — SPF cleansing page
+function renderCleansingGuideScreen() {
+  app.innerHTML = `
+    <!-- 7 — SPF cleansing page -->
+    <section class="screen cleansing-page">
+      <img class="cleansing-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
+
+      <h1 class="cleansing-page__title">SPF важно<br />правильно смывать</h1>
+
+      <p class="cleansing-page__intro">
+        Остатки солнцезащитных средств,<br />
+        особенно плотных формул, могут забивать поры<br />
+        и снижать эффективность последующего ухода.
+      </p>
+
+      <h2 class="cleansing-page__subtitle">Как очищать кожу вечером</h2>
+
+      <div class="cleansing-steps">
+        <article class="cleansing-step">
+          <span class="cleansing-step__number">01</span>
+          <div class="cleansing-step__copy">
+            <h3>Первый этап</h3>
+            <p>Гидрофильное масло, бальзам или<br />мицеллярная вода.</p>
+          </div>
+        </article>
+
+        <article class="cleansing-step">
+          <span class="cleansing-step__number">02</span>
+          <div class="cleansing-step__copy">
+            <h3>Второй этап</h3>
+            <p>Мягкий гель или пенка, подходящие<br />вашему типу кожи.</p>
+          </div>
+        </article>
+
+        <article class="cleansing-step">
+          <span class="cleansing-step__number">03</span>
+          <div class="cleansing-step__copy">
+            <h3>Завершение ухода</h3>
+            <p>Нанесите привычные увлажняющие<br />средства.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="cleansing-page__spacer"></div>
+
+      <aside class="hydrafacial-card">
+        <h2>HydraFacial</h2>
+        <p>Аппаратная процедура помогает провести<br />глубокое очищение и дополнить домашний уход.</p>
+        <button class="hydrafacial-card__action" id="final-page-button" type="button">
+          Подробнее о HydraFacial
+          <img src="${arrowIconUrl}" alt="" width="18" height="14" aria-hidden="true" />
+        </button>
+      </aside>
+
+      <button class="cleansing-page__back" id="cleansing-back-button" type="button" aria-label="Назад">
+        <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
+      </button>
+    </section>
+  `;
+
+  document.querySelector('#cleansing-back-button').addEventListener('click', () => {
+    setState({ showCleansingGuide: false });
+  });
+
+  document.querySelector('#final-page-button').addEventListener('click', () => {
+    setState({ showFinalPage: true });
+  });
+}
+
+// 8 — final page
+function renderFinalScreen() {
+  app.innerHTML = `
+    <!-- 8 — final page -->
+    <section class="screen final-page">
+      <img class="final-page__portrait" src="${finalImageUrl}" alt="" width="392" height="647" aria-hidden="true" />
+      <div class="final-page__fade" aria-hidden="true"></div>
+
+      <img class="final-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
+
+      <h1 class="final-page__title">Спасибо<br />за прохождение!</h1>
+
+      <button class="final-page__restart" id="final-restart-button" type="button">
+        <span>Пройти ещё раз</span>
+        <img src="${arrowIconUrl}" alt="" width="18" height="14" aria-hidden="true" />
+      </button>
+
+      <button class="final-page__back" id="final-back-button" type="button" aria-label="Назад">
+        <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
+      </button>
+    </section>
+  `;
+
+  document.querySelector('#final-restart-button').addEventListener('click', startTest);
+  document.querySelector('#final-back-button').addEventListener('click', () => {
+    setState({ showFinalPage: false });
+  });
 }
 
 function renderLoadingScreen() {
@@ -389,6 +612,16 @@ function renderLoadingScreen() {
 function render() {
   if (state.loading && !state.questions.length) {
     renderLoadingScreen();
+    return;
+  }
+
+  if (state.result && state.showFinalPage) {
+    renderFinalScreen();
+    return;
+  }
+
+  if (state.result && state.showCleansingGuide) {
+    renderCleansingGuideScreen();
     return;
   }
 
