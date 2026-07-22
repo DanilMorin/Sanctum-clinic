@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "ABC Diatype Cyrillic";
+  src: url("./assets/fonts/ABCDiatypeCyrillic-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --color-bg: var(--tg-bg-color, #fbf7f4);
   --color-card: #ffffff;
@@ -9,7 +17,7 @@
   --color-danger: #b00020;
 
   font-family:
-    Inter,
+    "ABC Diatype Cyrillic",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,

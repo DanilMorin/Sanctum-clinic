@@ -5,7 +5,7 @@ import {
   updateQuizAnswers,
 } from './api.js';
 import { getCurrentUser, initPlatform } from './platform.js';
-import './styles.css';
+import './styles.scss';
 
 const app = document.querySelector('#app');
 
