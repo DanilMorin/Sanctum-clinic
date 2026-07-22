@@ -37,6 +37,53 @@ const answerFieldByQuestionId = {
   product_format: 'productFormat',
 };
 
+const resultProfileLabels = {
+  skinType: {
+    oily: 'Жирная кожа',
+    combination: 'Комбинированная кожа',
+    dry: 'Сухая кожа',
+  },
+  skinFeatures: {
+    acne: 'Акне / высыпания',
+    rosacea: 'Розацеа',
+    couperose: 'Купероз',
+    pigmentation: 'Пигментация',
+    sensitive: 'Чувствительная кожа',
+    none: 'Без особенностей',
+  },
+  lifestyle: {
+    active: 'Активный ритм',
+    normal: 'Обычный ритм',
+  },
+  spfUsage: {
+    makeup_base: 'Под макияж',
+    standalone: 'Самостоятельный уход',
+  },
+  productFormat: {
+    pharmacy: 'Рассмотрю аптечные варианты',
+    professional: 'Рассмотрю профессиональные варианты',
+    both: 'Рассмотрю аптечные и профессиональные варианты',
+  },
+};
+
+function getResultProfileTags(answers) {
+  const featureTags = answers.skinFeatures.map(
+    (feature) => resultProfileLabels.skinFeatures[feature],
+  );
+
+  return [
+    resultProfileLabels.skinType[answers.skinType],
+    ...featureTags,
+    resultProfileLabels.lifestyle[answers.lifestyle],
+    resultProfileLabels.spfUsage[answers.spfUsage],
+    resultProfileLabels.productFormat[answers.productFormat],
+  ].filter(Boolean);
+}
+
+function formatSpfLabel(spf) {
+  return spf?.replace(/SPF\s*(\d+)/i, 'SPF $1');
+}
+
 function setState(patch) {
   Object.assign(state, patch);
   render();
@@ -330,74 +377,119 @@ function renderQuestionScreen() {
   document.querySelector('#back-button').addEventListener('click', goBack);
 }
 
+// 6 — result page
 function renderResultScreen() {
   const result = state.result;
   const recommendation = result.recommendation;
+  const profileTags = getResultProfileTags(result.answers);
+  const priorityFeature = recommendation.priorityFeature;
+  const priorityLabel = resultProfileLabels.skinFeatures[priorityFeature];
+  const mainProduct = recommendation.mainProduct;
+  const professionalProduct = recommendation.professionalProduct;
+  const mainProductTags = mainProduct
+    ? [
+        formatSpfLabel(mainProduct.spf),
+        mainProduct.texture
+          ? `${mainProduct.texture}${mainProduct.texture.toLowerCase().includes('текстур') ? '' : ' текстура'}`
+          : null,
+        mainProduct.isMakeupBase === null
+          ? null
+          : `Под макияж: ${mainProduct.isMakeupBase ? 'да' : 'нет'}`,
+      ].filter(Boolean)
+    : [];
 
   app.innerHTML = `
-    <section class="screen">
-      <div class="card result-card">
-        <h1>Ваш результат</h1>
+    <!-- 6 — result page -->
+    <section class="screen result-page">
+      <img class="result-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
 
-        <p class="muted">
-          Приоритетная особенность:
-          <strong>${result.answers.priorityFeature}</strong>
+      <h1 class="result-page__title">Ваша персональная<br />рекомендация</h1>
+
+      <section class="result-section result-profile">
+        <h2 class="result-section__title">Ваш профиль</h2>
+        <div class="result-tags">
+          ${profileTags.map((tag) => `<span class="result-tag">${tag}</span>`).join('')}
+        </div>
+        <p class="result-profile__note">
+          ${
+            priorityFeature === 'none'
+              ? 'Подбор выполнен без дополнительного приоритета:<br />особенности кожи не отмечены.'
+              : `Приоритет подбора: ${priorityLabel}.`
+          }
         </p>
+      </section>
 
-        ${
-          recommendation.mainProduct
-            ? `
-              <article class="product-card">
-                <h2>Основная рекомендация</h2>
-                <strong>${recommendation.mainProduct.name}</strong>
-                <p>${recommendation.mainProduct.brand || ''}</p>
-                <p>${recommendation.mainProduct.spf || ''}</p>
-              </article>
-            `
-            : ''
-        }
+      ${
+        mainProduct
+          ? `
+            <article class="result-section result-section--divided result-product">
+              <h2 class="result-section__title">Основная рекомендация</h2>
+              <h3 class="result-product__name">${mainProduct.name}</h3>
+              ${
+                mainProductTags.length
+                  ? `<div class="result-tags">${mainProductTags.map((tag) => `<span class="result-tag">${tag}</span>`).join('')}</div>`
+                  : ''
+              }
+              ${mainProduct.description ? `<p class="result-product__description">${mainProduct.description}</p>` : ''}
+            </article>
+          `
+          : ''
+      }
 
-        ${
-          recommendation.alternatives.length
-            ? `
-              <article class="product-card">
-                <h2>Также подходят</h2>
-                <ul>
-                  ${recommendation.alternatives
-                    .map((product) => `<li>${product.name}</li>`)
-                    .join('')}
-                </ul>
-              </article>
-            `
-            : ''
-        }
+      ${
+        recommendation.alternatives.length
+          ? `
+            <section class="result-section result-section--divided result-alternatives">
+              <h2 class="result-section__title">Также подходят</h2>
+              <div class="result-alternatives__list">
+                ${recommendation.alternatives
+                  .map((product) => `<p>${product.name}</p>`)
+                  .join('')}
+              </div>
+            </section>
+          `
+          : ''
+      }
 
-        ${
-          recommendation.professionalProduct
-            ? `
-              <article class="product-card">
-                <h2>Профессиональный вариант</h2>
-                <strong>${recommendation.professionalProduct.name}</strong>
-                <p>${recommendation.professionalProduct.brand || ''}</p>
-                <p>${recommendation.professionalProduct.spf || ''}</p>
-              </article>
-            `
-            : ''
-        }
+      ${
+        professionalProduct
+          ? `
+            <article class="result-section result-section--divided result-professional">
+              <h2 class="result-section__title">Профессиональный<br />вариант</h2>
+              <h3 class="result-product__name">${professionalProduct.name}</h3>
+              ${
+                professionalProduct.doctorComment || professionalProduct.description
+                  ? `<p class="result-professional__description">${professionalProduct.doctorComment || professionalProduct.description}</p>`
+                  : ''
+              }
+            </article>
+          `
+          : ''
+      }
 
-        <p class="disclaimer">
-          Если вы беременны, кормите грудью или принимаете системные ретиноиды,
-          перед использованием солнцезащитного средства проконсультируйтесь с вашим врачом.
-        </p>
+      <aside class="result-disclaimer">
+        <h2>Важно</h2>
+        <p>Если вы беременны, кормите грудью или принимаете системные ретиноиды, перед использованием SPF проконсультируйтесь с вашим врачом.</p>
+      </aside>
 
-        <button class="button button--primary" id="restart-button">
-          Пройти заново
+      <nav class="result-actions" aria-label="Навигация по результам">
+        <button class="result-actions__back" id="result-back-button" type="button" aria-label="Назад">
+          <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
         </button>
-      </div>
+        <span class="result-actions__guide">
+          Правильный смыв SPF
+          <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
+        </span>
+      </nav>
     </section>
   `;
 
-  document.querySelector('#restart-button').addEventListener('click', startTest);
+  document.querySelector('#result-back-button').addEventListener('click', () => {
+    setState({
+      result: null,
+      currentStepIndex: Math.max(state.questions.length - 1, 0),
+    });
+  });
 }
 
 function renderLoadingScreen() {
