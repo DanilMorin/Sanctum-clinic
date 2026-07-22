@@ -71,7 +71,19 @@ button {
 }
 
 @media (max-width: 392px) {
+  .app {
+    align-items: flex-start;
+  }
+
   .screen {
+    height: auto;
+    min-height: 100dvh;
     border-radius: 0;
+  }
+}
+
+@media (max-width: 340px) {
+  :root {
+    --page-padding: 32px 16px 28px;
   }
 }

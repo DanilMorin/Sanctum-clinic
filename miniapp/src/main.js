@@ -6,6 +6,7 @@ import {
 } from './api.js';
 import { getCurrentUser, initPlatform } from './platform.js';
 import startImageUrl from './assets/img/start-image.png';
+import finalImageUrl from './assets/img/final-image.png';
 import logoUrl from './assets/img/logo.svg';
 import arrowIconUrl from './assets/img/arrow-icon.svg';
 import arrowIconLightUrl from './assets/img/arrow-icon-light.svg';
@@ -25,6 +26,8 @@ const state = {
     productFormat: undefined,
   },
   result: null,
+  showCleansingGuide: false,
+  showFinalPage: false,
   loading: false,
   error: null,
 };
@@ -145,6 +148,8 @@ async function startTest() {
       error: null,
       currentStepIndex: 0,
       result: null,
+      showCleansingGuide: false,
+      showFinalPage: false,
       answers: {
         skinType: undefined,
         skinFeatures: [],
@@ -476,10 +481,10 @@ function renderResultScreen() {
         <button class="result-actions__back" id="result-back-button" type="button" aria-label="Назад">
           <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
         </button>
-        <span class="result-actions__guide">
+        <button class="result-actions__guide" id="cleansing-guide-button" type="button">
           Правильный смыв SPF
           <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
-        </span>
+        </button>
       </nav>
     </section>
   `;
@@ -489,6 +494,108 @@ function renderResultScreen() {
       result: null,
       currentStepIndex: Math.max(state.questions.length - 1, 0),
     });
+  });
+
+  document.querySelector('#cleansing-guide-button').addEventListener('click', () => {
+    setState({ showCleansingGuide: true });
+  });
+}
+
+// 7 — SPF cleansing page
+function renderCleansingGuideScreen() {
+  app.innerHTML = `
+    <!-- 7 — SPF cleansing page -->
+    <section class="screen cleansing-page">
+      <img class="cleansing-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
+
+      <h1 class="cleansing-page__title">SPF важно<br />правильно смывать</h1>
+
+      <p class="cleansing-page__intro">
+        Остатки солнцезащитных средств,<br />
+        особенно плотных формул, могут забивать поры<br />
+        и снижать эффективность последующего ухода.
+      </p>
+
+      <h2 class="cleansing-page__subtitle">Как очищать кожу вечером</h2>
+
+      <div class="cleansing-steps">
+        <article class="cleansing-step">
+          <span class="cleansing-step__number">01</span>
+          <div class="cleansing-step__copy">
+            <h3>Первый этап</h3>
+            <p>Гидрофильное масло, бальзам или<br />мицеллярная вода.</p>
+          </div>
+        </article>
+
+        <article class="cleansing-step">
+          <span class="cleansing-step__number">02</span>
+          <div class="cleansing-step__copy">
+            <h3>Второй этап</h3>
+            <p>Мягкий гель или пенка, подходящие<br />вашему типу кожи.</p>
+          </div>
+        </article>
+
+        <article class="cleansing-step">
+          <span class="cleansing-step__number">03</span>
+          <div class="cleansing-step__copy">
+            <h3>Завершение ухода</h3>
+            <p>Нанесите привычные увлажняющие<br />средства.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="cleansing-page__spacer"></div>
+
+      <aside class="hydrafacial-card">
+        <h2>HydraFacial</h2>
+        <p>Аппаратная процедура помогает провести<br />глубокое очищение и дополнить домашний уход.</p>
+        <button class="hydrafacial-card__action" id="final-page-button" type="button">
+          Подробнее о HydraFacial
+          <img src="${arrowIconUrl}" alt="" width="18" height="14" aria-hidden="true" />
+        </button>
+      </aside>
+
+      <button class="cleansing-page__back" id="cleansing-back-button" type="button" aria-label="Назад">
+        <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
+      </button>
+    </section>
+  `;
+
+  document.querySelector('#cleansing-back-button').addEventListener('click', () => {
+    setState({ showCleansingGuide: false });
+  });
+
+  document.querySelector('#final-page-button').addEventListener('click', () => {
+    setState({ showFinalPage: true });
+  });
+}
+
+// 8 — final page
+function renderFinalScreen() {
+  app.innerHTML = `
+    <!-- 8 — final page -->
+    <section class="screen final-page">
+      <img class="final-page__portrait" src="${finalImageUrl}" alt="" width="392" height="647" aria-hidden="true" />
+      <div class="final-page__fade" aria-hidden="true"></div>
+
+      <img class="final-page__logo" src="${logoUrl}" alt="Sanctum" width="167" height="23" />
+
+      <h1 class="final-page__title">Спасибо<br />за прохождение!</h1>
+
+      <button class="final-page__restart" id="final-restart-button" type="button">
+        <span>Пройти ещё раз</span>
+        <img src="${arrowIconUrl}" alt="" width="18" height="14" aria-hidden="true" />
+      </button>
+
+      <button class="final-page__back" id="final-back-button" type="button" aria-label="Назад">
+        <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
+      </button>
+    </section>
+  `;
+
+  document.querySelector('#final-restart-button').addEventListener('click', startTest);
+  document.querySelector('#final-back-button').addEventListener('click', () => {
+    setState({ showFinalPage: false });
   });
 }
 
@@ -505,6 +612,16 @@ function renderLoadingScreen() {
 function render() {
   if (state.loading && !state.questions.length) {
     renderLoadingScreen();
+    return;
+  }
+
+  if (state.result && state.showFinalPage) {
+    renderFinalScreen();
+    return;
+  }
+
+  if (state.result && state.showCleansingGuide) {
+    renderCleansingGuideScreen();
     return;
   }
 
