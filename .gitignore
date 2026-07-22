@@ -17,5 +17,8 @@ coverage
 .idea
 .vscode
 
+# Paid font files must stay local and must not be committed.
+miniapp/src/assets/fonts/
+
 .data
 data
