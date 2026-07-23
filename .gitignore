@@ -4,6 +4,9 @@ dist
 .env.local
 .env.*.local
 
+.agents
+.playwright-mcp
+
 .DS_Store
 Thumbs.db
 
@@ -17,5 +20,8 @@ coverage
 .idea
 .vscode
 
+# Paid font files must stay local and must not be committed.
+miniapp/src/assets/fonts/
+miniapp/docs/
 .data
 data
