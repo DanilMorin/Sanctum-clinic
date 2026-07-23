@@ -22,6 +22,7 @@ import {
   isQuestionAnswered,
   normalizeFeatureSelection,
 } from './quiz-logic.js';
+import { initResultScreenBehavior } from './result-screen-behavior.js';
 
 const DEFAULT_ERROR_MESSAGE =
   'Не удалось выполнить запрос. Попробуйте ещё раз.';
@@ -48,8 +49,12 @@ function createSessionPayload() {
 
 export function createQuizController(rootElement) {
   let state = createInitialQuizState();
+  let cleanupCurrentScreen = () => {};
 
   function render() {
+    cleanupCurrentScreen();
+    cleanupCurrentScreen = () => {};
+
     switch (state.screen) {
       case SCREEN.loading:
         rootElement.innerHTML = renderLoadingScreen();
@@ -59,6 +64,7 @@ export function createQuizController(rootElement) {
         break;
       case SCREEN.result:
         rootElement.innerHTML = renderResultScreen(state.result);
+        cleanupCurrentScreen = initResultScreenBehavior(rootElement);
         break;
       case SCREEN.cleansingGuide:
         rootElement.innerHTML = renderCleansingGuideScreen();
