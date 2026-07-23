@@ -47,7 +47,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 'skin_features',
     step: 2,
-    title: 'Есть ли у вашей кожи особенности?',
+    title: 'Какие особенности есть у вашей кожи?',
     progressLabel: 'Особенности',
     type: 'multiple',
     options: [
@@ -80,14 +80,14 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 'lifestyle',
     step: 3,
-    title: 'Какой у вас образ жизни?',
+    title: 'Как проходит ваш обычный день?',
     progressLabel: 'Образ жизни',
     type: 'single',
     options: [
       {
         value: 'active',
         label: 'Активный',
-        description: 'Спорт, много времени на улице, важна стойкость',
+        description: 'Спорт, много времени на улице, важна стойкость средства',
       },
       {
         value: 'normal',
@@ -99,33 +99,33 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 'spf_usage',
     step: 4,
-    title: 'Как вы планируете использовать SPF?',
+    title: 'Как вы используете SPF?',
     progressLabel: 'Использование',
     type: 'single',
     options: [
       {
         value: 'makeup_base',
-        label: 'Как база под макияж',
-        description: 'Важна лёгкая текстура, незаметность на коже',
+        label: 'Как базу под макияж',
+        description: 'Важны лёгкая текстура, незаметность на коже',
       },
       {
         value: 'standalone',
         label: 'Как самостоятельный уход',
-        description: 'Без макияжа или поверх других средств',
+        description: 'Без макияжа или поверх других средств ухода',
       },
     ],
   },
   {
     id: 'product_format',
     step: 5,
-    title: 'Какой формат средств вам подходит?',
+    title: 'Какой формат вам подходит?',
     progressLabel: 'Формат',
     type: 'single',
     options: [
       {
         value: 'pharmacy',
         label: 'Аптечная косметика',
-        description: 'Vichy, La Roche-Posay, Bioderma и другие',
+        description: 'Vichy, La Roche-Posay, Bioderma и другие марки',
       },
       {
         value: 'professional',
@@ -142,7 +142,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 ];
 
 export const QUIZ_DISCLAIMER =
-  'Если вы беременны, кормите грудью или принимаете системные ретиноиды, перед использованием солнцезащитного средства проконсультируйтесь с вашим врачом.';
+  `Если вы беременны, кормите грудью или принимаете системные ретиноиды, перед использованием SPF проконсультируйтесь с вашим врачом.`;
 
 export const QUIZ_FINAL_CARD_TEXT =
   'Солнцезащитные средства, особенно плотные формулы, важно правильно смывать. Остатки SPF могут забивать поры и снижать эффективность ухода.';
