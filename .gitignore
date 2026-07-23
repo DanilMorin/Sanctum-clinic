@@ -19,6 +19,6 @@ coverage
 
 # Paid font files must stay local and must not be committed.
 miniapp/src/assets/fonts/
-
+miniapp/docs/
 .data
 data
