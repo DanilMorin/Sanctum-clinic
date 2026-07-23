@@ -14,6 +14,14 @@ import {
 } from '../features/quiz/quiz-logic.js';
 import { escapeHtml } from '../utils/html.js';
 
+const DESCRIPTION_BREAK_AFTER_BY_OPTION_VALUE = {
+  makeup_base: 'лёгкая текстура,',
+  standalone: 'или поверх',
+  pharmacy: 'Bioderma',
+  professional: 'SkinCeuticals,',
+  both: 'Покажите все подходящие рекомендации',
+};
+
 function renderError(error) {
   return error ? `<p class="error" role="alert">${escapeHtml(error)}</p>` : '';
 }
@@ -36,6 +44,27 @@ function renderResultGuideButton({ className, iconUrl, markerAttribute }) {
       <img src="${iconUrl}" alt="" width="18" height="14" aria-hidden="true" />
     </button>
   `;
+}
+
+function renderOptionDescription(option) {
+  const description = option.description;
+  const breakAfter = DESCRIPTION_BREAK_AFTER_BY_OPTION_VALUE[option.value];
+
+  if (!breakAfter) {
+    return escapeHtml(description);
+  }
+
+  const breakPosition = description.indexOf(breakAfter);
+
+  if (breakPosition === -1) {
+    return escapeHtml(description);
+  }
+
+  const firstLineEnd = breakPosition + breakAfter.length;
+  const firstLine = description.slice(0, firstLineEnd);
+  const secondLine = description.slice(firstLineEnd).trimStart();
+
+  return `${escapeHtml(firstLine)}<br />${escapeHtml(secondLine)}`;
 }
 
 function renderQuestionOptions(question, selectedAnswer, isLoading) {
@@ -63,7 +92,7 @@ function renderQuestionOptions(question, selectedAnswer, isLoading) {
             <strong class="option__label">${escapeHtml(option.label)}</strong>
             ${
               option.description
-                ? `<small class="option__description">${escapeHtml(option.description)}</small>`
+                ? `<small class="option__description">${renderOptionDescription(option)}</small>`
                 : ''
             }
           </span>
