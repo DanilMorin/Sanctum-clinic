@@ -24,7 +24,25 @@ function renderTags(tags) {
     .join('');
 }
 
+function renderResultGuideButton({ className, iconUrl, markerAttribute }) {
+  return `
+    <button
+      class="${className}"
+      data-action="show-cleansing-guide"
+      ${markerAttribute}
+      type="button"
+    >
+      Как правильно смывать SPF
+      <img src="${iconUrl}" alt="" width="18" height="14" aria-hidden="true" />
+    </button>
+  `;
+}
+
 function renderQuestionOptions(question, selectedAnswer, isLoading) {
+  const optionTypeClass = isMultipleQuestion(question)
+    ? 'option--multiple'
+    : '';
+
   return question.options
     .map((option) => {
       const isSelected = Array.isArray(selectedAnswer)
@@ -33,7 +51,7 @@ function renderQuestionOptions(question, selectedAnswer, isLoading) {
 
       return `
         <button
-          class="option ${isSelected ? 'option--selected' : ''}"
+          class="option ${optionTypeClass} ${isSelected ? 'option--selected' : ''}"
           data-action="select-answer"
           data-value="${escapeHtml(option.value)}"
           type="button"
@@ -53,6 +71,16 @@ function renderQuestionOptions(question, selectedAnswer, isLoading) {
       `;
     })
     .join('');
+}
+
+function getQuestionHint(question) {
+  if (question.id === 'lifestyle') {
+    return 'Выберите наиболее подходящий вариант';
+  }
+
+  return isMultipleQuestion(question)
+    ? 'Выберите один или несколько вариантов'
+    : 'Выберите один вариант';
 }
 
 function renderStepper(questions, currentStepIndex, progressLabel) {
@@ -143,14 +171,23 @@ export function renderQuestionScreen(state) {
 
       <div class="question-copy">
         <h1 class="question-copy__title">${escapeHtml(question.title)}</h1>
-        <p class="question-copy__hint">
-          Выберите ${isMultipleQuestion(question) ? 'один или несколько вариантов' : 'один вариант'}
-        </p>
+        <p class="question-copy__hint">${getQuestionHint(question)}</p>
       </div>
 
       <div class="options">
         ${renderQuestionOptions(question, selectedAnswer, state.isLoading)}
       </div>
+
+      ${
+        question.id === 'skin_features'
+          ? `
+            <p class="question-copy__hint question-page__selection-note">
+              «Без особенностей» нельзя сочетать<br />
+              с другими вариантами
+            </p>
+          `
+          : ''
+      }
 
       ${renderError(state.error)}
 
@@ -252,17 +289,19 @@ export function renderResultScreen(result) {
         professionalProduct
           ? `
             <article class="result-section result-section--divided result-professional">
-              <h2 class="result-section__title">Профессиональный<br />вариант</h2>
-              <h3 class="result-product__name">${escapeHtml(professionalProduct.name)}</h3>
-              ${
-                professionalProduct.doctorComment ||
-                professionalProduct.description
-                  ? `<p class="result-professional__description">${escapeHtml(
-                      professionalProduct.doctorComment ||
-                        professionalProduct.description,
-                    )}</p>`
-                  : ''
-              }
+              <h2 class="result-section__title">Профессиональный вариант</h2>
+              <div class="result-professional__content">
+                <h3 class="result-product__name">${escapeHtml(professionalProduct.name)}</h3>
+                ${
+                  professionalProduct.doctorComment ||
+                  professionalProduct.description
+                    ? `<p class="result-professional__description">${escapeHtml(
+                        professionalProduct.doctorComment ||
+                          professionalProduct.description,
+                      )}</p>`
+                    : ''
+                }
+              </div>
             </article>
           `
           : ''
@@ -277,11 +316,20 @@ export function renderResultScreen(result) {
         <button class="result-actions__back" id="result-back-button" data-action="return-to-quiz" type="button" aria-label="Назад">
           <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
         </button>
-        <button class="result-actions__guide" id="cleansing-guide-button" data-action="show-cleansing-guide" type="button">
-          Правильный смыв SPF
-          <img src="${arrowIconLightUrl}" alt="" width="18" height="14" aria-hidden="true" />
-        </button>
+        ${renderResultGuideButton({
+          className: 'result-actions__guide',
+          iconUrl: arrowIconLightUrl,
+          markerAttribute: 'data-result-guide-end',
+        })}
       </nav>
+
+      <div class="result-guide-prompt" data-result-guide-fixed>
+        ${renderResultGuideButton({
+          className: 'result-guide-prompt__button',
+          iconUrl: arrowIconUrl,
+          markerAttribute: '',
+        })}
+      </div>
     </section>
   `;
 }

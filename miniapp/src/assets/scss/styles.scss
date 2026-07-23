@@ -257,6 +257,7 @@
       height: 18px;
       border: 1px solid var(--color-navy);
       border-radius: 50%;
+      background: transparent;
     }
 
     &__copy {
@@ -292,6 +293,11 @@
       border-color: #ecf0f3;
       background: var(--color-page);
 
+      .option__marker {
+        border-color: var(--color-navy);
+        background: transparent;
+      }
+
       .option__marker::after {
         position: absolute;
         inset: 3px;
@@ -300,6 +306,20 @@
         content: "";
       }
     }
+
+    &--multiple {
+      .option__marker {
+        border-radius: 4px;
+      }
+
+      &.option--selected .option__marker::after {
+        border-radius: 1px;
+      }
+    }
+  }
+
+  &__selection-note {
+    margin-top: 20px;
   }
 
   .question-actions {
@@ -359,12 +379,11 @@
 
   &__title {
     width: 100%;
-    margin: 54px 0 0;
+    margin: 27px 0 0;
     color: var(--color-navy);
     font-family: var(--font-family);
     font-size: 34px;
     font-weight: 400;
-    letter-spacing: 0.04em;
     line-height: 103%;
   }
 
@@ -372,7 +391,7 @@
     display: flex;
     width: 100%;
     flex-direction: column;
-    gap: 12px;
+    gap: 20px;
 
     &--divided {
       margin-top: 24px;
@@ -387,7 +406,6 @@
       font-family: var(--font-family);
       font-size: 28px;
       font-weight: 400;
-      letter-spacing: 0.04em;
       line-height: 103%;
     }
   }
@@ -402,7 +420,6 @@
       font-family: var(--font-family);
       font-size: 12px;
       font-weight: 400;
-      letter-spacing: 0.04em;
       line-height: 130%;
     }
 
@@ -430,7 +447,6 @@
     font-family: var(--font-family);
     font-size: 15px;
     font-weight: 400;
-    letter-spacing: 0.04em;
     line-height: 135%;
     white-space: nowrap;
   }
@@ -443,7 +459,6 @@
       font-family: var(--font-family);
       font-size: 20px;
       font-weight: 400;
-      letter-spacing: 0.04em;
       line-height: 108%;
     }
 
@@ -454,7 +469,6 @@
       font-family: var(--font-family);
       font-size: 14px;
       font-weight: 400;
-      letter-spacing: 0.04em;
       line-height: 135%;
       white-space: pre-line;
     }
@@ -476,7 +490,6 @@
         font-family: var(--font-family);
         font-size: 20px;
         font-weight: 400;
-        letter-spacing: 0.04em;
         line-height: 115%;
 
         &:nth-child(2) {
@@ -497,6 +510,13 @@
   }
 
   .result-professional {
+    &__content {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     &__description {
       width: 100%;
       margin: 0;
@@ -504,7 +524,6 @@
       font-family: var(--font-family);
       font-size: 13px;
       font-weight: 400;
-      letter-spacing: 0.04em;
       line-height: 130%;
       white-space: pre-line;
     }
@@ -527,7 +546,6 @@
       margin: 0;
       font-family: var(--font-family);
       font-weight: 400;
-      letter-spacing: 0.04em;
     }
 
     h2 {
@@ -575,10 +593,54 @@
       align-items: center;
       color: var(--color-gray-blue);
       font-family: var(--font-family);
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 400;
       line-height: 100%;
       white-space: nowrap;
+    }
+  }
+
+  .result-guide-prompt {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    left: 50%;
+    display: flex;
+    width: min(100%, var(--app-width));
+    padding: 60px 20px 35px;
+    overflow: hidden;
+    border-radius: 0 0 var(--page-radius) var(--page-radius);
+    background: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0%),
+      var(--color-page) 50%
+    );
+    transform: translateX(-50%);
+
+    &[hidden] {
+      display: none;
+    }
+
+    &__button {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 0;
+      border: 0;
+      color: var(--color-navy);
+      background: transparent;
+      font-family: var(--font-family);
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 100%;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      width: 18px;
+      height: 14px;
     }
   }
 }
@@ -865,6 +927,12 @@
   }
 }
 
+@media (max-width: 392px) {
+  .result-page .result-guide-prompt {
+    border-radius: 0;
+  }
+}
+
 @media (max-width: 340px) {
   .welcome__title,
   .result-page__title,
@@ -882,9 +950,10 @@
     font-size: 25px;
   }
 
-  .result-page .result-actions__guide {
+  .result-page .result-actions__guide,
+  .result-page .result-guide-prompt__button {
     gap: 6px;
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .cleansing-page .hydrafacial-card__action {
