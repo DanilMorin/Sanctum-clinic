@@ -9,10 +9,15 @@ import { quizRouter } from './routes/quiz.routes.js';
 
 export function createApiServer() {
   const app = express();
+  const webAppOrigin = new URL(env.webAppUrl).origin;
+
+  app.disable('x-powered-by');
 
   app.use(
     cors({
-      origin: true,
+      origin(origin, callback) {
+        callback(null, !origin || origin === webAppOrigin);
+      },
       credentials: true,
     }),
   );
@@ -43,4 +48,3 @@ export function startApiServer(): void {
     });
   });
 }
-
