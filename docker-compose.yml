@@ -3,6 +3,7 @@
     build:
       context: .
       dockerfile: Dockerfile
+      target: build
     container_name: sanctum_clinic_app
     restart: unless-stopped
     env_file:
