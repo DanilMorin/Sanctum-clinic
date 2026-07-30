@@ -13,6 +13,7 @@ import type {
   SkinType,
   Lifestyle,
 } from '../domain/quiz/quiz.types.js';
+import { RecommendationRuleNotFoundError } from '../domain/recommendation/recommendation.errors.js';
 import { recommendationRuleRepository } from '../repositories/recommendation-rule.repository.js';
 
 type RecommendationRuleWithProducts =
@@ -59,14 +60,11 @@ export class RecommendationService {
     });
 
     if (!rule) {
-      throw new Error(
-        [
-          'Recommendation rule was not found',
-          `skinType=${input.skinType}`,
-          `priorityFeature=${priorityFeature}`,
-          `lifestyle=${input.lifestyle}`,
-        ].join('; '),
-      );
+      throw new RecommendationRuleNotFoundError({
+        skinType: input.skinType,
+        priorityFeature,
+        lifestyle: input.lifestyle,
+      });
     }
 
     return rule;

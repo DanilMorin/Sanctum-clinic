@@ -43,13 +43,12 @@ export class RecommendationRuleRepository {
   }
 
   async findMatchingRule(input: FindRecommendationRuleInput) {
-    const exactRule = await prisma.recommendationRule.findUnique({
+    const exactRule = await prisma.recommendationRule.findFirst({
       where: {
-        skinType_priorityFeature_lifestyle: {
-          skinType: input.skinType,
-          priorityFeature: input.priorityFeature,
-          lifestyle: input.lifestyle,
-        },
+        skinType: input.skinType,
+        priorityFeature: input.priorityFeature,
+        lifestyle: input.lifestyle,
+        isActive: true,
       },
       include: {
         mainProduct: true,
@@ -69,13 +68,12 @@ export class RecommendationRuleRepository {
       return exactRule;
     }
 
-    return prisma.recommendationRule.findUnique({
+    return prisma.recommendationRule.findFirst({
       where: {
-        skinType_priorityFeature_lifestyle: {
-          skinType: input.skinType,
-          priorityFeature: input.priorityFeature,
-          lifestyle: 'any',
-        },
+        skinType: input.skinType,
+        priorityFeature: input.priorityFeature,
+        lifestyle: 'any',
+        isActive: true,
       },
       include: {
         mainProduct: true,
@@ -94,6 +92,9 @@ export class RecommendationRuleRepository {
 
   async findMany(): Promise<RecommendationRule[]> {
     return prisma.recommendationRule.findMany({
+      where: {
+        isActive: true,
+      },
       orderBy: [
         {
           skinType: 'asc',
