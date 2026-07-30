@@ -107,27 +107,39 @@ export function formatTemporaryResultText(
   ].join('\n');
 }
 
+function formatProductDetails(
+  product: Product,
+  indentation = '',
+): string[] {
+  return [
+    product.brand ? `${indentation}• Бренд: ${product.brand}` : null,
+    product.spf ? `${indentation}• SPF: ${product.spf}` : null,
+    product.texture ? `${indentation}• Текстура: ${product.texture}` : null,
+    typeof product.isMakeupBase === 'boolean'
+      ? `${indentation}• Подходит как база под макияж: ${
+          product.isMakeupBase ? 'да' : 'нет'
+        }`
+      : null,
+    product.description
+      ? `${indentation}• Описание: ${product.description}`
+      : null,
+    product.doctorComment
+      ? `${indentation}• Комментарий врача: ${product.doctorComment}`
+      : null,
+  ].filter((row): row is string => row !== null);
+}
+
 function formatProductCard(title: string, product: Product | null): string[] {
   if (!product) {
     return [];
   }
 
-  const rows = [
+  return [
     title,
+    '',
     product.name,
-    product.brand ? `Бренд: ${product.brand}` : null,
-    product.spf ? `SPF: ${product.spf}` : null,
-    product.texture ? `Текстура: ${product.texture}` : null,
-    typeof product.isMakeupBase === 'boolean'
-      ? `Подходит как база под макияж: ${
-          product.isMakeupBase ? 'да' : 'нет'
-        }`
-      : null,
-    product.description ? `Описание: ${product.description}` : null,
-    product.doctorComment ? `Комментарий врача: ${product.doctorComment}` : null,
-  ].filter(Boolean);
-
-  return rows as string[];
+    ...formatProductDetails(product),
+  ];
 }
 
 function formatAlternatives(alternatives: Product[]): string[] {
@@ -136,19 +148,30 @@ function formatAlternatives(alternatives: Product[]): string[] {
   }
 
   return [
-    'Также подходит:',
-    ...alternatives.map((product, index) => {
-      const prefix = `${index + 1}. ${product.name}`;
-      const details = [
-        product.brand ? `бренд: ${product.brand}` : null,
-        product.spf ? `SPF: ${product.spf}` : null,
-        product.texture ? `текстура: ${product.texture}` : null,
-      ]
-        .filter(Boolean)
-        .join(', ');
+    '🔄 ТАКЖЕ ПОДХОДЯТ',
+    '',
+    ...alternatives.flatMap((product, index) => [
+      `${index + 1}. ${product.name}`,
+      ...formatProductDetails(product, '   '),
+      index < alternatives.length - 1 ? '' : null,
+    ]),
+  ].filter((row): row is string => row !== null);
+}
 
-      return details ? `${prefix} (${details})` : prefix;
-    }),
+function formatProfileRows(answers: CompletedQuizAnswers): string[] {
+  return [
+    '✅ ТЕСТ ПРОЙДЕН',
+    '',
+    '👤 ВАШ ПРОФИЛЬ',
+    '',
+    `• Тип кожи: ${skinTypeLabels[answers.skinType]}`,
+    `• Особенности: ${answers.skinFeatures
+      .map((feature) => skinFeatureLabels[feature])
+      .join(', ')}`,
+    `• Приоритет подбора: ${skinFeatureLabels[answers.priorityFeature]}`,
+    `• Образ жизни: ${lifestyleLabels[answers.lifestyle]}`,
+    `• Использование SPF: ${spfUsageLabels[answers.spfUsage]}`,
+    `• Формат средств: ${productFormatLabels[answers.productFormat]}`,
   ];
 }
 
@@ -158,29 +181,17 @@ export function formatRecommendationResultText(input: {
 }): string {
   const { answers, recommendation } = input;
 
-  const profileRows = [
-    'Тест пройден ✅',
-    '',
-    'Ваш профиль:',
-    `Тип кожи: ${skinTypeLabels[answers.skinType]}`,
-    `Особенности: ${answers.skinFeatures
-      .map((feature) => skinFeatureLabels[feature])
-      .join(', ')}`,
-    `Приоритет подбора: ${skinFeatureLabels[answers.priorityFeature]}`,
-    `Образ жизни: ${lifestyleLabels[answers.lifestyle]}`,
-    `Использование SPF: ${spfUsageLabels[answers.spfUsage]}`,
-    `Формат средств: ${productFormatLabels[answers.productFormat]}`,
-  ];
+  const profileRows = formatProfileRows(answers);
 
   const mainProductRows = formatProductCard(
-    'Основная рекомендация:',
+    '🧴 ОСНОВНАЯ РЕКОМЕНДАЦИЯ',
     recommendation.mainProduct,
   );
 
   const alternativeRows = formatAlternatives(recommendation.alternatives);
 
   const professionalRows = formatProductCard(
-    'Профессиональный вариант:',
+    '💎 ПРОФЕССИОНАЛЬНЫЙ ВАРИАНТ',
     recommendation.professionalProduct,
   );
 
@@ -188,16 +199,21 @@ export function formatRecommendationResultText(input: {
     ...profileRows,
     '',
     ...mainProductRows,
+    mainProductRows.length ? ['', '──────────'] : null,
     mainProductRows.length ? '' : null,
     ...alternativeRows,
+    alternativeRows.length ? ['', '──────────'] : null,
     alternativeRows.length ? '' : null,
     ...professionalRows,
+    professionalRows.length ? ['', '──────────'] : null,
     professionalRows.length ? '' : null,
-    'Важно:',
+    '⚠️ ВАЖНО',
+    '',
     QUIZ_DISCLAIMER,
     '',
     QUIZ_FINAL_CARD_TEXT,
   ]
-    .filter(Boolean)
+    .flat()
+    .filter((row): row is string => row !== null)
     .join('\n');
 }

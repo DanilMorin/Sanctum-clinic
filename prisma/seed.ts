@@ -6,6 +6,8 @@ import {
   SkinType,
 } from '@prisma/client';
 
+import { productDetailsByName } from '../src/domain/product/product-details.js';
+
 const prisma = new PrismaClient();
 
 interface SeedRule {
@@ -288,16 +290,17 @@ async function seedProducts(): Promise<Map<string, number>> {
     const category = professionalProductNames.has(productName)
       ? ProductCategory.professional
       : ProductCategory.pharmacy;
+    const details = productDetailsByName[productName];
 
     const product = await prisma.product.create({
       data: {
         name: productName,
-        brand: detectBrand(productName),
+        brand: details?.brand ?? detectBrand(productName),
         category,
-        spf: detectSpf(productName),
-        texture: null,
-        isMakeupBase: null,
-        description: null,
+        spf: details?.spf ?? detectSpf(productName),
+        texture: details?.texture ?? null,
+        isMakeupBase: details?.isMakeupBase ?? null,
+        description: details?.description ?? null,
         doctorComment: null,
         imageUrl: null,
       },
