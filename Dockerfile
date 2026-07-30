@@ -10,6 +10,7 @@ RUN npm ci
 COPY tsconfig.json ./
 COPY prisma ./prisma
 COPY src ./src
+COPY catalog ./catalog
 
 RUN npx prisma generate
 RUN npm run build

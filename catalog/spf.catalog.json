@@ -1,0 +1,466 @@
+{
+  "version": 1,
+  "products": [
+    {
+      "name": "Avène Cicalfate+ SPF50",
+      "brand": "Avène",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Крем",
+      "isMakeupBase": false,
+      "description": "Восстанавливает защитный барьер, успокаивает раздражённую кожу",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Avène Sport Fluid SPF50",
+      "brand": "Avène",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": false,
+      "description": "Лёгкий невесомый флюид для занятий спортом на открытом воздухе",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Bioderma Hydrabio Perfecteur SPF30",
+      "brand": "BIODERMA",
+      "category": "pharmacy",
+      "spf": "SPF30",
+      "texture": "Крем",
+      "isMakeupBase": true,
+      "description": "Придаёт сияние, увлажняет, выравнивает тон. Идеальная база под макияж",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "BIODERMA Photoderm Ultra-Fluid AR+ SPF50",
+      "brand": "BIODERMA",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Специальная формула AR — уменьшает покраснения, укрепляет сосудистую стенку",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "BIODERMA Photoderm Xdefense Ultra Fluid",
+      "brand": "BIODERMA",
+      "category": "pharmacy",
+      "spf": "SPF50+",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Ультралёгкий флюид для ежедневной защиты. Хорошая база под макияж",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Eucerin Anti-Pigment SPF30",
+      "brand": "Eucerin",
+      "category": "pharmacy",
+      "spf": "SPF30",
+      "texture": "Крем",
+      "isMakeupBase": false,
+      "description": "Уменьшает пигментные пятна, выравнивает тон кожи",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "HydroPeptide Solar Defense Non-Tinted SPF50",
+      "brand": "HydroPeptide",
+      "category": "professional",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Защита на физических фильтрах. Матирующий эффект, подходит для чувствительной кожи",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "HydroPeptide Solar Defense Tinted SPF30",
+      "brand": "HydroPeptide",
+      "category": "professional",
+      "spf": "SPF30",
+      "texture": "Крем",
+      "isMakeupBase": true,
+      "description": "Цветовые сферы подстраиваются под тон кожи. Быстро впитывается, не оставляет белого налёта",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "IS Clinical Eclipse SPF50+",
+      "brand": "IS Clinical",
+      "category": "professional",
+      "spf": "SPF50+",
+      "texture": "Крем",
+      "isMakeupBase": true,
+      "description": "Физические фильтры с витамином Е. Ультралёгкая текстура, здоровое сияние. Отличная база под макияж",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "La Roche-Posay Anthelios невидимый флюид SPF50",
+      "brand": "La Roche-Posay",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Невидимый на коже. Отличная база под макияж",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "La Roche-Posay Anthelios спрей-вуаль SPF50",
+      "brand": "La Roche-Posay",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Спрей",
+      "isMakeupBase": false,
+      "description": "Стойкий невесомый спрей. Удобно обновлять защиту в течение дня",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "La Roche-Posay Anthelios Age Correct",
+      "brand": "La Roche-Posay",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": false,
+      "description": "Фотокоррекция ежедневная — борется с признаками фотостарения и пигментацией",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "SkinCeuticals Brightening UV Defense SPF30",
+      "brand": "SkinCeuticals",
+      "category": "professional",
+      "spf": "SPF30",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Увлажняющий флюид, выравнивает тон и придаёт сияние. Уменьшает пигментные пятна",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "SVR Sebiaclear SPF50",
+      "brand": "SVR",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Матирует, не забивает поры, борется с несовершенствами",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "SVR Sensifine AR SPF50",
+      "brand": "SVR",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Крем",
+      "isMakeupBase": true,
+      "description": "Успокаивает чувствительную кожу. Отличная база под макияж",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "VICHY спрей анти-песок SPF50",
+      "brand": "VICHY",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Спрей",
+      "isMakeupBase": false,
+      "description": "Водостойкий спрей для активных людей",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "VICHY Capital Soleil флюид SPF50",
+      "brand": "VICHY",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": false,
+      "description": "Лёгкий флюид для жирной кожи склонной к акне",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "VICHY Capital Soleil эмульсия SPF50",
+      "brand": "VICHY",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Эмульсия",
+      "isMakeupBase": true,
+      "description": "Подходит для любого типа кожи. Лёгкая увлажняющая текстура",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "VICHY Ideal Soleil матирующая SPF30",
+      "brand": "VICHY",
+      "category": "pharmacy",
+      "spf": "SPF30",
+      "texture": "Эмульсия",
+      "isMakeupBase": true,
+      "description": "Матирует кожу в течение дня, контролирует блеск",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Vichy UV Age-Daily SPF50+",
+      "brand": "VICHY",
+      "category": "pharmacy",
+      "spf": "SPF50+",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Борется с фотостарением и пигментацией. Лёгкая текстура",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "VICHY UV-Clear SPF50+",
+      "brand": "VICHY",
+      "category": "pharmacy",
+      "spf": "SPF50+",
+      "texture": "Флюид",
+      "isMakeupBase": true,
+      "description": "Специально для проблемной кожи. Не забивает поры, уменьшает несовершенства",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "YU.R CCC крем SPF50",
+      "brand": "YU.R",
+      "category": "professional",
+      "spf": "SPF50",
+      "texture": "Крем",
+      "isMakeupBase": true,
+      "description": "Корректирующий увлажняющий крем. Ровный естественный оттенок без серого подтона",
+      "doctorComment": null,
+      "imageUrl": null
+    }
+  ],
+  "rules": [
+    {
+      "skinType": "oily",
+      "priorityFeature": "none",
+      "lifestyle": "normal",
+      "mainProduct": "VICHY Ideal Soleil матирующая SPF30",
+      "alternatives": [
+        "La Roche-Posay Anthelios спрей-вуаль SPF50"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "none",
+      "lifestyle": "active",
+      "mainProduct": "La Roche-Posay Anthelios спрей-вуаль SPF50",
+      "alternatives": [
+        "VICHY Ideal Soleil матирующая SPF30"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "acne",
+      "lifestyle": "normal",
+      "mainProduct": "VICHY UV-Clear SPF50+",
+      "alternatives": [
+        "SVR Sebiaclear SPF50",
+        "VICHY Capital Soleil флюид SPF50",
+        "VICHY Ideal Soleil матирующая SPF30"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "acne",
+      "lifestyle": "active",
+      "mainProduct": "La Roche-Posay Anthelios спрей-вуаль SPF50",
+      "alternatives": [
+        "Avène Sport Fluid SPF50"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "rosacea",
+      "lifestyle": "any",
+      "mainProduct": "La Roche-Posay Anthelios спрей-вуаль SPF50",
+      "alternatives": [],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "couperose",
+      "lifestyle": "any",
+      "mainProduct": "BIODERMA Photoderm Ultra-Fluid AR+ SPF50",
+      "alternatives": [],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "pigmentation",
+      "lifestyle": "any",
+      "mainProduct": "Vichy UV Age-Daily SPF50+",
+      "alternatives": [
+        "Eucerin Anti-Pigment SPF30",
+        "La Roche-Posay Anthelios Age Correct"
+      ],
+      "professionalProduct": "SkinCeuticals Brightening UV Defense SPF30"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "none",
+      "lifestyle": "any",
+      "mainProduct": "La Roche-Posay Anthelios невидимый флюид SPF50",
+      "alternatives": [
+        "VICHY Capital Soleil эмульсия SPF50",
+        "VICHY Ideal Soleil матирующая SPF30",
+        "BIODERMA Photoderm Xdefense Ultra Fluid"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Tinted SPF30"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "acne",
+      "lifestyle": "normal",
+      "mainProduct": "SVR Sebiaclear SPF50",
+      "alternatives": [
+        "VICHY Capital Soleil флюид SPF50",
+        "VICHY Ideal Soleil матирующая SPF30"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "acne",
+      "lifestyle": "active",
+      "mainProduct": "La Roche-Posay Anthelios спрей-вуаль SPF50",
+      "alternatives": [
+        "Avène Sport Fluid SPF50"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "rosacea",
+      "lifestyle": "any",
+      "mainProduct": "La Roche-Posay Anthelios спрей-вуаль SPF50",
+      "alternatives": [],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "couperose",
+      "lifestyle": "any",
+      "mainProduct": "BIODERMA Photoderm Ultra-Fluid AR+ SPF50",
+      "alternatives": [
+        "La Roche-Posay Anthelios спрей-вуаль SPF50",
+        "VICHY спрей анти-песок SPF50"
+      ],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "pigmentation",
+      "lifestyle": "any",
+      "mainProduct": "Vichy UV Age-Daily SPF50+",
+      "alternatives": [
+        "Eucerin Anti-Pigment SPF30",
+        "La Roche-Posay Anthelios Age Correct"
+      ],
+      "professionalProduct": "SkinCeuticals Brightening UV Defense SPF30"
+    },
+    {
+      "skinType": "combination",
+      "priorityFeature": "sensitive",
+      "lifestyle": "any",
+      "mainProduct": "SVR Sensifine AR SPF50",
+      "alternatives": [
+        "Avène Cicalfate+ SPF50",
+        "VICHY Capital Soleil эмульсия SPF50"
+      ],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "none",
+      "lifestyle": "normal",
+      "mainProduct": "Bioderma Hydrabio Perfecteur SPF30",
+      "alternatives": [
+        "SVR Sensifine AR SPF50",
+        "La Roche-Posay Anthelios невидимый флюид SPF50",
+        "VICHY Capital Soleil эмульсия SPF50"
+      ],
+      "professionalProduct": "YU.R CCC крем SPF50"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "none",
+      "lifestyle": "active",
+      "mainProduct": "VICHY спрей анти-песок SPF50",
+      "alternatives": [
+        "Avène Sport Fluid SPF50"
+      ],
+      "professionalProduct": "HydroPeptide Solar Defense Non-Tinted SPF50"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "sensitive",
+      "lifestyle": "normal",
+      "mainProduct": "SVR Sensifine AR SPF50",
+      "alternatives": [
+        "Avène Cicalfate+ SPF50",
+        "La Roche-Posay Anthelios невидимый флюид SPF50",
+        "VICHY Capital Soleil эмульсия SPF50"
+      ],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "sensitive",
+      "lifestyle": "active",
+      "mainProduct": "VICHY спрей анти-песок SPF50",
+      "alternatives": [
+        "Avène Sport Fluid SPF50"
+      ],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "rosacea",
+      "lifestyle": "any",
+      "mainProduct": "SVR Sensifine AR SPF50",
+      "alternatives": [
+        "Bioderma Hydrabio Perfecteur SPF30"
+      ],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "couperose",
+      "lifestyle": "any",
+      "mainProduct": "BIODERMA Photoderm Ultra-Fluid AR+ SPF50",
+      "alternatives": [
+        "Avène Cicalfate+ SPF50"
+      ],
+      "professionalProduct": "IS Clinical Eclipse SPF50+"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "pigmentation",
+      "lifestyle": "any",
+      "mainProduct": "Vichy UV Age-Daily SPF50+",
+      "alternatives": [
+        "Bioderma Hydrabio Perfecteur SPF30"
+      ],
+      "professionalProduct": "SkinCeuticals Brightening UV Defense SPF30"
+    }
+  ]
+}

@@ -3,6 +3,10 @@ import { ProxyAgent, fetch as undiciFetch } from 'undici';
 
 import { env } from '../../config/env.js';
 import { logger } from '../../lib/logger.js';
+import {
+  BOT_COMMANDS,
+  handleHelpCommand,
+} from './commands/help.command.js';
 import { handleStartCommand } from './commands/start.command.js';
 import { registerQuizHandlers } from './handlers/quiz.handler.js';
 
@@ -28,6 +32,7 @@ export function createTelegramBot(): Telegraf {
   });
 
   bot.start(handleStartCommand);
+  bot.help(handleHelpCommand);
 
   registerQuizHandlers(bot);
 
@@ -46,6 +51,12 @@ export async function startTelegramBot(): Promise<Telegraf | null> {
   }
 
   const bot = createTelegramBot();
+
+  try {
+    await bot.telegram.setMyCommands(BOT_COMMANDS);
+  } catch (error) {
+    logger.error('Failed to register Telegram bot commands', error);
+  }
 
   await bot.launch();
 

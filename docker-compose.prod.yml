@@ -39,7 +39,7 @@ services:
       [
         "sh",
         "-c",
-        "npx prisma migrate deploy && npm run products:backfill",
+        "npx prisma migrate deploy && npm run catalog:sync",
       ]
     depends_on:
       mysql:
