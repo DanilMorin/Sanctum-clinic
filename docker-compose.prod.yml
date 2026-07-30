@@ -35,7 +35,12 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
       SHADOW_DATABASE_URL: ${SHADOW_DATABASE_URL:?SHADOW_DATABASE_URL is required}
-    command: ["npx", "prisma", "migrate", "deploy"]
+    command:
+      [
+        "sh",
+        "-c",
+        "npx prisma migrate deploy && npm run products:backfill",
+      ]
     depends_on:
       mysql:
         condition: service_healthy
