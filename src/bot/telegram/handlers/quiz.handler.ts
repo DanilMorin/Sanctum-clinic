@@ -12,6 +12,10 @@ import type {
     SkinType,
     SpfUsage,
 } from '../../../domain/quiz/quiz.types.js';
+import {
+    RECOMMENDATION_NOT_AVAILABLE_MESSAGE,
+    RecommendationRuleNotFoundError,
+} from '../../../domain/recommendation/recommendation.errors.js';
 import { logger } from '../../../lib/logger.js';
 import { quizService } from '../../../services/quiz.service.js';
 import { userService } from '../../../services/user.service.js';
@@ -261,6 +265,14 @@ export function registerQuizHandlers(bot: Telegraf): void {
 
             await ctx.reply('Неизвестное действие. Попробуйте начать заново.');
         } catch (error) {
+            if (error instanceof RecommendationRuleNotFoundError) {
+                logger.warn(error.message);
+                await ctx.reply(RECOMMENDATION_NOT_AVAILABLE_MESSAGE, {
+                    reply_markup: buildRestartKeyboard(),
+                });
+                return;
+            }
+
             logger.error('Quiz handler error', error);
 
             await ctx.reply(

@@ -131,6 +131,7 @@ model RecommendationRule {
   skinType        SkinType
   priorityFeature SkinFeature
   lifestyle       Lifestyle
+  isActive        Boolean @default(true)
 
   mainProductId Int?
   mainProduct   Product? @relation("MainProduct", fields: [mainProductId], references: [id], onDelete: SetNull)
@@ -146,6 +147,7 @@ model RecommendationRule {
 
   @@index([mainProductId])
   @@index([professionalProductId])
+  @@index([isActive])
   @@unique([skinType, priorityFeature, lifestyle])
   @@map("recommendation_rules")
 }

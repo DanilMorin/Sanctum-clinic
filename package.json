@@ -15,8 +15,11 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
-    "products:backfill": "tsx src/scripts/backfill-product-details.ts",
-    "import:spf": "tsx src/scripts/import-spf-from-excel.ts"
+    "catalog:generate": "tsx src/scripts/generate-catalog.ts",
+    "catalog:validate": "tsx src/scripts/validate-catalog.ts",
+    "catalog:sync": "tsx src/scripts/sync-catalog.ts",
+    "catalog:update": "tsx src/scripts/update-catalog.ts",
+    "import:spf": "npm run catalog:update"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
