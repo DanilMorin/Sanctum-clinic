@@ -9,6 +9,11 @@ import {
 } from './commands/help.command.js';
 import { handleStartCommand } from './commands/start.command.js';
 import { registerQuizHandlers } from './handlers/quiz.handler.js';
+import {
+  assertBotCanCheckSubscriptions,
+  CHECK_SUBSCRIPTION_CALLBACK,
+  requireChannelSubscription,
+} from './middlewares/user.middleware.js';
 
 export function createTelegramBot(): Telegraf {
   const proxyAgent = env.telegramProxyUrl
@@ -31,7 +36,13 @@ export function createTelegramBot(): Telegraf {
       : undefined,
   });
 
+  bot.use(requireChannelSubscription);
+
   bot.start(handleStartCommand);
+  bot.action(CHECK_SUBSCRIPTION_CALLBACK, async (ctx) => {
+    await ctx.answerCbQuery('Подписка подтверждена');
+    await handleStartCommand(ctx);
+  });
   bot.help(handleHelpCommand);
 
   registerQuizHandlers(bot);
@@ -51,6 +62,7 @@ export async function startTelegramBot(): Promise<Telegraf | null> {
   }
 
   const bot = createTelegramBot();
+  await assertBotCanCheckSubscriptions(bot);
 
   try {
     await bot.telegram.setMyCommands(BOT_COMMANDS);
