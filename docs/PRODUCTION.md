@@ -32,6 +32,10 @@ chmod 600 .env.prod
 Обязательные особенности:
 
 - `TELEGRAM_PROXY_URL` использует проверенный HTTP proxy;
+- `TELEGRAM_SUBSCRIPTION_REQUIRED=false` оставляет проверку подписки выключенной;
+- при `TELEGRAM_SUBSCRIPTION_REQUIRED=true` обязательны корректные
+  `TELEGRAM_CHANNEL_ID` и `TELEGRAM_CHANNEL_URL`, а бот должен быть
+  администратором указанного канала;
 - `WEB_APP_URL` содержит публичный HTTPS-адрес Mini App без завершающего `/`;
 - хост MySQL в `DATABASE_URL` — `mysql`, не `localhost`;
 - пароль внутри `DATABASE_URL` должен быть URL-кодирован, если содержит
@@ -137,6 +141,26 @@ docker compose \
 
 Prisma-миграции применяются автоматически перед запуском новой версии
 приложения.
+
+### Отложенное включение проверки подписки
+
+Обновление можно развернуть заранее с настройкой:
+
+```env
+TELEGRAM_SUBSCRIPTION_REQUIRED=false
+```
+
+Когда бот будет добавлен администратором канала, укажите в `.env.prod`:
+
+```env
+TELEGRAM_SUBSCRIPTION_REQUIRED=true
+TELEGRAM_CHANNEL_ID=@channel_username
+TELEGRAM_CHANNEL_URL=https://t.me/channel_username
+```
+
+Затем повторно выполните `docker compose up -d --build` с параметрами
+`--env-file .env.prod -f docker-compose.prod.yml`. Compose пересоздаст сервис
+`app` с новыми переменными окружения.
 
 ## 8. Остановка
 

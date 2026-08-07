@@ -48,10 +48,56 @@ function getNumberEnv(name: string, defaultValue: number): number {
   return parsedValue;
 }
 
+function getTelegramChannelId(required: boolean): string | undefined {
+  if (!required) {
+    return undefined;
+  }
+
+  const value = getEnv('TELEGRAM_CHANNEL_ID');
+
+  if (/^-100\d+$/.test(value) || /^@[a-zA-Z0-9_]+$/.test(value)) {
+    return value;
+  }
+
+  throw new Error(
+    'Environment variable TELEGRAM_CHANNEL_ID must be a full channel ID (-100...) or @username',
+  );
+}
+
+function getTelegramChannelUrl(required: boolean): string | undefined {
+  if (!required) {
+    return undefined;
+  }
+
+  const value = getEnv('TELEGRAM_CHANNEL_URL');
+
+  try {
+    const url = new URL(value);
+
+    if (url.protocol === 'https:' && url.hostname === 't.me' && url.pathname !== '/') {
+      return value;
+    }
+  } catch {
+    // The validation error below describes the expected format.
+  }
+
+  throw new Error(
+    'Environment variable TELEGRAM_CHANNEL_URL must be a complete https://t.me/... link',
+  );
+}
+
+const telegramSubscriptionRequired = getBooleanEnv(
+  'TELEGRAM_SUBSCRIPTION_REQUIRED',
+  false,
+);
+
 export const env = {
   botToken: getEnv('BOT_TOKEN'),
   botEnabled: getBooleanEnv('BOT_ENABLED', true),
   telegramProxyUrl: getOptionalEnv('TELEGRAM_PROXY_URL'),
+  telegramSubscriptionRequired,
+  telegramChannelId: getTelegramChannelId(telegramSubscriptionRequired),
+  telegramChannelUrl: getTelegramChannelUrl(telegramSubscriptionRequired),
 
   adminChatId: getEnv('ADMIN_CHAT_ID'),
   webAppUrl: getEnv('WEB_APP_URL'),
