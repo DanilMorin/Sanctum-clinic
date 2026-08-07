@@ -48,7 +48,11 @@ function getNumberEnv(name: string, defaultValue: number): number {
   return parsedValue;
 }
 
-function getTelegramChannelId(): string {
+function getTelegramChannelId(required: boolean): string | undefined {
+  if (!required) {
+    return undefined;
+  }
+
   const value = getEnv('TELEGRAM_CHANNEL_ID');
 
   if (/^-100\d+$/.test(value) || /^@[a-zA-Z0-9_]+$/.test(value)) {
@@ -60,7 +64,11 @@ function getTelegramChannelId(): string {
   );
 }
 
-function getTelegramChannelUrl(): string {
+function getTelegramChannelUrl(required: boolean): string | undefined {
+  if (!required) {
+    return undefined;
+  }
+
   const value = getEnv('TELEGRAM_CHANNEL_URL');
 
   try {
@@ -78,12 +86,18 @@ function getTelegramChannelUrl(): string {
   );
 }
 
+const telegramSubscriptionRequired = getBooleanEnv(
+  'TELEGRAM_SUBSCRIPTION_REQUIRED',
+  false,
+);
+
 export const env = {
   botToken: getEnv('BOT_TOKEN'),
   botEnabled: getBooleanEnv('BOT_ENABLED', true),
   telegramProxyUrl: getOptionalEnv('TELEGRAM_PROXY_URL'),
-  telegramChannelId: getTelegramChannelId(),
-  telegramChannelUrl: getTelegramChannelUrl(),
+  telegramSubscriptionRequired,
+  telegramChannelId: getTelegramChannelId(telegramSubscriptionRequired),
+  telegramChannelUrl: getTelegramChannelUrl(telegramSubscriptionRequired),
 
   adminChatId: getEnv('ADMIN_CHAT_ID'),
   webAppUrl: getEnv('WEB_APP_URL'),

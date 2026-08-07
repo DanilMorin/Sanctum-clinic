@@ -36,13 +36,16 @@ export function createTelegramBot(): Telegraf {
       : undefined,
   });
 
-  bot.use(requireChannelSubscription);
+  if (env.telegramSubscriptionRequired) {
+    bot.use(requireChannelSubscription);
+
+    bot.action(CHECK_SUBSCRIPTION_CALLBACK, async (ctx) => {
+      await ctx.answerCbQuery('Подписка подтверждена');
+      await handleStartCommand(ctx);
+    });
+  }
 
   bot.start(handleStartCommand);
-  bot.action(CHECK_SUBSCRIPTION_CALLBACK, async (ctx) => {
-    await ctx.answerCbQuery('Подписка подтверждена');
-    await handleStartCommand(ctx);
-  });
   bot.help(handleHelpCommand);
 
   registerQuizHandlers(bot);
@@ -74,6 +77,7 @@ export async function startTelegramBot(): Promise<Telegraf | null> {
 
   logger.info('Telegram bot started', {
     proxyEnabled: Boolean(env.telegramProxyUrl),
+    subscriptionRequired: env.telegramSubscriptionRequired,
   });
 
   return bot;

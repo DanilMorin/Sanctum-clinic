@@ -11,14 +11,25 @@ const SUBSCRIBED_STATUSES = new Set([
 
 export const CHECK_SUBSCRIPTION_CALLBACK = 'subscription:check';
 
+function getChannelConfig(): { id: string; url: string } {
+  const { telegramChannelId: id, telegramChannelUrl: url } = env;
+
+  if (!id || !url) {
+    throw new Error('Telegram channel configuration is missing');
+  }
+
+  return { id, url };
+}
+
 export async function isUserSubscribed(ctx: Context): Promise<boolean> {
   if (!ctx.from) {
     return false;
   }
 
   try {
+    const { id } = getChannelConfig();
     const member = await ctx.telegram.getChatMember(
-      env.telegramChannelId,
+      id,
       ctx.from.id,
     );
 
@@ -30,6 +41,8 @@ export async function isUserSubscribed(ctx: Context): Promise<boolean> {
 }
 
 export async function replyWithSubscriptionPrompt(ctx: Context): Promise<void> {
+  const { url } = getChannelConfig();
+
   await ctx.reply(
     'Для использования бота необходимо подписаться на наш Telegram-канал.',
     {
@@ -38,7 +51,7 @@ export async function replyWithSubscriptionPrompt(ctx: Context): Promise<void> {
           [
             {
               text: 'Подписаться на канал',
-              url: env.telegramChannelUrl,
+              url,
             },
           ],
           [
@@ -90,9 +103,14 @@ export const requireChannelSubscription: MiddlewareFn<Context> = async (
 export async function assertBotCanCheckSubscriptions(
   bot: Telegraf,
 ): Promise<void> {
+  if (!env.telegramSubscriptionRequired) {
+    return;
+  }
+
+  const { id } = getChannelConfig();
   const botInfo = await bot.telegram.getMe();
   const member = await bot.telegram.getChatMember(
-    env.telegramChannelId,
+    id,
     botInfo.id,
   );
 
