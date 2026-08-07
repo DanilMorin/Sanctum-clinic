@@ -1,0 +1,89 @@
+$app-width: 393px;
+$app-height: 852px;
+$page-padding: 40px 20px 35px;
+$page-radius: 30px;
+
+@font-face {
+  font-family: "ABC Diatype Cyrillic";
+  src: url("../fonts/ABCDiatypeCyrillic-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --font-family: "ABC Diatype Cyrillic", system-ui, sans-serif;
+  --color-navy: #21395b;
+  --color-gray-blue: #8c99ab;
+  --color-page: #ffffff;
+  --color-background: #f4f4f4;
+  --app-width: #{$app-width};
+  --app-height: #{$app-height};
+  --page-padding: #{$page-padding};
+  --page-radius: #{$page-radius};
+  font-family: var(--font-family);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-navy);
+  background: var(--color-background);
+}
+
+button {
+  font: inherit;
+}
+
+.app {
+  display: flex;
+  min-height: 100dvh;
+  justify-content: center;
+}
+
+.screen {
+  position: relative;
+  width: min(100%, var(--app-width));
+  min-height: min(var(--app-height), 100dvh);
+  margin: 0 auto;
+  padding: var(--page-padding);
+  overflow: hidden;
+  border-radius: var(--page-radius);
+  background: var(--color-page);
+}
+
+@media (min-height: 852px) {
+  .app {
+    align-items: center;
+  }
+
+  .screen {
+    height: var(--app-height);
+  }
+}
+
+@media (max-width: 392px) {
+  .app {
+    align-items: flex-start;
+  }
+
+  .screen {
+    height: auto;
+    min-height: 100dvh;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 340px) {
+  :root {
+    --page-padding: 32px 16px 28px;
+  }
+}
