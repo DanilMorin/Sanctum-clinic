@@ -12,20 +12,15 @@ test('versioned SPF catalog is structurally valid', () => {
   );
 
   assert.deepEqual(errors, []);
-  assert.equal(catalog.products.length, 22);
-  assert.equal(catalog.rules.length, 21);
+  assert.equal(catalog.products.length, 26);
+  assert.equal(catalog.rules.length, 25);
 });
 
 test('catalog reports all currently missing recommendation combinations', () => {
   const catalog = loadCatalog();
   const { validation } = validateCatalog(catalog);
 
-  assert.deepEqual(validation.missingRuleCombinations, [
-    'oily:sensitive:normal',
-    'oily:sensitive:active',
-    'dry:acne:normal',
-    'dry:acne:active',
-  ]);
+  assert.deepEqual(validation.missingRuleCombinations, []);
 });
 
 test('catalog validation rejects references to unknown products', () => {

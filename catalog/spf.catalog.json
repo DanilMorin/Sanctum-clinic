@@ -242,6 +242,50 @@
       "description": "Корректирующий увлажняющий крем. Ровный естественный оттенок без серого подтона",
       "doctorComment": null,
       "imageUrl": null
+    },
+    {
+      "name": "La Roche-Posay Anthelios Hydrating Cream SPF50",
+      "brand": "La Roche-Posay",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Крем",
+      "isMakeupBase": false,
+      "description": "Очень хорошее увлажнение, можно использовать как самостоятельное средство, без комедогенного эффекта",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Avène Solaire Fluid SPF50+",
+      "brand": "Avène",
+      "category": "pharmacy",
+      "spf": "SPF50+",
+      "texture": "Флюид",
+      "isMakeupBase": null,
+      "description": "Хорошо впитывается, не оставляет следов, водостойкий, успокаивает кожу",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Bioderma Photoderm Aquafluide SPF50",
+      "brand": "BIODERMA",
+      "category": "pharmacy",
+      "spf": "SPF50",
+      "texture": "Флюид",
+      "isMakeupBase": null,
+      "description": "Лёгкая текстура, не ощущается на коже",
+      "doctorComment": null,
+      "imageUrl": null
+    },
+    {
+      "name": "Avène Clearance Solaire SPF50+",
+      "brand": "Avène",
+      "category": "pharmacy",
+      "spf": "SPF50+",
+      "texture": "Флюид",
+      "isMakeupBase": null,
+      "description": "Содержит матирующий компонент, регулирует секрецию кожного сала и уменьшает жирный блеск",
+      "doctorComment": null,
+      "imageUrl": null
     }
   ],
   "rules": [
@@ -461,6 +505,38 @@
         "Bioderma Hydrabio Perfecteur SPF30"
       ],
       "professionalProduct": "SkinCeuticals Brightening UV Defense SPF30"
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "acne",
+      "lifestyle": "normal",
+      "mainProduct": "La Roche-Posay Anthelios Hydrating Cream SPF50",
+      "alternatives": [],
+      "professionalProduct": null
+    },
+    {
+      "skinType": "dry",
+      "priorityFeature": "acne",
+      "lifestyle": "active",
+      "mainProduct": "Avène Solaire Fluid SPF50+",
+      "alternatives": [],
+      "professionalProduct": null
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "sensitive",
+      "lifestyle": "normal",
+      "mainProduct": "Bioderma Photoderm Aquafluide SPF50",
+      "alternatives": [],
+      "professionalProduct": null
+    },
+    {
+      "skinType": "oily",
+      "priorityFeature": "sensitive",
+      "lifestyle": "active",
+      "mainProduct": "Avène Clearance Solaire SPF50+",
+      "alternatives": [],
+      "professionalProduct": null
     }
   ]
 }
