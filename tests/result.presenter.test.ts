@@ -3,7 +3,12 @@ import test from 'node:test';
 
 import type { Product } from '@prisma/client';
 
-import { formatRecommendationResultText } from '../src/bot/telegram/presenters/result.presenter.js';
+import {
+  CONSULTATION_LINK,
+  CONSULTATION_MESSAGE,
+  CONSULTATION_MESSAGE_HTML,
+  formatRecommendationResultText,
+} from '../src/bot/telegram/presenters/result.presenter.js';
 
 function createProduct(overrides: Partial<Product> = {}): Product {
   return {
@@ -64,6 +69,14 @@ test('formats the Telegram result as readable sections with complete product det
   assert.match(result, /💎 ПРОФЕССИОНАЛЬНЫЙ ВАРИАНТ/);
   assert.match(result, /• Комментарий врача: Комментарий специалиста\./);
   assert.match(result, /⚠️ ВАЖНО\n\n/);
+  assert.doesNotMatch(result, /Записаться на консультацию/);
+  assert.doesNotMatch(result, /https:\/\//);
+  assert.equal(CONSULTATION_MESSAGE, '➡️ Записаться на консультацию → @sanctumclinic');
+  assert.equal(
+    CONSULTATION_MESSAGE_HTML,
+    `➡️ <a href="${CONSULTATION_LINK}">Записаться на консультацию</a> → @sanctumclinic`,
+  );
+  assert.doesNotMatch(CONSULTATION_LINK, /\s/);
   assert.ok(result.length < 4096);
 });
 

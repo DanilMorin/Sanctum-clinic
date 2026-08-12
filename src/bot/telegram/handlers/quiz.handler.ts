@@ -26,6 +26,7 @@ import {
     buildSkinFeaturesKeyboard,
 } from '../keyboards/quiz.keyboard.js';
 import {
+    CONSULTATION_MESSAGE_HTML,
     formatQuizQuestionText,
     formatRecommendationResultText,
     formatSkinFeaturesQuestionText,
@@ -158,15 +159,15 @@ async function handleSingleAnswer(
 
         const result = await quizService.completeQuizSession(sessionId);
 
-        await ctx.reply(
-            formatRecommendationResultText({
-                answers: result.answers,
-                recommendation: result.recommendation,
-            }),
-            {
-                reply_markup: buildRestartKeyboard(),
-            },
-        );
+        const resultText = formatRecommendationResultText({
+            answers: result.answers,
+            recommendation: result.recommendation,
+        });
+
+        await ctx.reply(resultText);
+        await ctx.replyWithHTML(CONSULTATION_MESSAGE_HTML, {
+            reply_markup: buildRestartKeyboard(),
+        });
 
         return;
     }

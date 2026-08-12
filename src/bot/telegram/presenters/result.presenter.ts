@@ -15,6 +15,15 @@ import type {
 } from '../../../domain/quiz/quiz.types.js';
 import type { RecommendationResult } from '../../../services/recommendation.service.js';
 
+export const CONSULTATION_LINK =
+  'https://t.me/sanctumclinic?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5,%E2%A0%80%D0%BF%D0%B8%D1%88%D1%83%E2%A0%80%D0%B8%D0%B7%E2%A0%80%D0%A2%D0%93%E2%A0%80%D0%BA%D0%B0%D0%BD%D0%B0%D0%BB%D0%B0';
+
+export const CONSULTATION_MESSAGE =
+  '➡️ Записаться на консультацию → @sanctumclinic';
+
+export const CONSULTATION_MESSAGE_HTML =
+  `➡️ <a href="${CONSULTATION_LINK}">Записаться на консультацию</a> → @sanctumclinic`;
+
 export const skinTypeLabels: Record<SkinType, string> = {
   oily: 'Жирная',
   combination: 'Комбинированная',
