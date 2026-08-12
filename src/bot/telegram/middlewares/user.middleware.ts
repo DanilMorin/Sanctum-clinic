@@ -11,7 +11,7 @@ const SUBSCRIBED_STATUSES = new Set([
 
 export const CHECK_SUBSCRIPTION_CALLBACK = 'subscription:check';
 
-function isTransientTelegramNetworkError(error: unknown): error is Error {
+export function isTransientTelegramNetworkError(error: unknown): error is Error {
   if (!(error instanceof Error)) {
     return false;
   }
