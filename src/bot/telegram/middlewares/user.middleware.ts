@@ -11,6 +11,18 @@ const SUBSCRIBED_STATUSES = new Set([
 
 export const CHECK_SUBSCRIPTION_CALLBACK = 'subscription:check';
 
+function isTransientTelegramNetworkError(error: unknown): error is Error {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.name === 'AbortError' ||
+    error.name === 'TimeoutError' ||
+    (error instanceof TypeError && error.message === 'fetch failed')
+  );
+}
+
 function getChannelConfig(): { id: string; url: string } {
   const { telegramChannelId: id, telegramChannelUrl: url } = env;
 
@@ -108,11 +120,26 @@ export async function assertBotCanCheckSubscriptions(
   }
 
   const { id } = getChannelConfig();
-  const botInfo = await bot.telegram.getMe();
-  const member = await bot.telegram.getChatMember(
-    id,
-    botInfo.id,
-  );
+  let member;
+
+  try {
+    const botInfo = bot.botInfo ?? (await bot.telegram.getMe());
+    member = await bot.telegram.getChatMember(id, botInfo.id);
+  } catch (error) {
+    if (!isTransientTelegramNetworkError(error)) {
+      throw error;
+    }
+
+    logger.warn(
+      'Telegram subscription permissions could not be checked because the network is unavailable; bot startup will continue',
+      {
+        errorName: error.name,
+        errorMessage: error.message,
+      },
+    );
+
+    return;
+  }
 
   if (member.status !== 'administrator' && member.status !== 'creator') {
     throw new Error(
