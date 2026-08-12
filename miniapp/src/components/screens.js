@@ -14,6 +14,9 @@ import {
 } from '../features/quiz/quiz-logic.js';
 import { escapeHtml } from '../utils/html.js';
 
+const CONSULTATION_URL =
+  'https://t.me/sanctumclinic?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5,%E2%A0%80%D0%BF%D0%B8%D1%88%D1%83%E2%A0%80%D0%B8%D0%B7%E2%A0%80%D0%A2%D0%93%E2%A0%80%D0%BA%D0%B0%D0%BD%D0%B0%D0%BB%D0%B0';
+
 const DESCRIPTION_BREAK_AFTER_BY_OPTION_VALUE = {
   makeup_base: 'лёгкая текстура,',
   standalone: 'или поверх',
@@ -339,6 +342,23 @@ export function renderResultScreen(result) {
       <aside class="result-disclaimer">
         <h2>Важно</h2>
         <p>Если вы беременны, кормите грудью или принимаете системные ретиноиды, перед использованием SPF проконсультируйтесь с вашим врачом.</p>
+      </aside>
+
+      <aside class="result-consultation">
+        <div class="result-consultation__copy">
+          <h2>Нужна помощь специалиста?</h2>
+          <p>Запишитесь на консультацию в Sanctum Clinic — поможем уточнить рекомендации с учётом состояния вашей кожи.</p>
+        </div>
+        <a
+          class="result-consultation__link"
+          href="${CONSULTATION_URL}"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Записаться на консультацию в Sanctum Clinic"
+        >
+          <span>Записаться на консультацию</span>
+          <img src="${arrowIconUrl}" alt="" width="18" height="14" aria-hidden="true" />
+        </a>
       </aside>
 
       <nav class="result-actions" aria-label="Навигация по результатам">

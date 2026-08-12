@@ -4,15 +4,15 @@ $page-padding: 40px 20px 35px;
 $page-radius: 30px;
 
 @font-face {
-  font-family: "ABC Diatype Cyrillic";
-  src: url("../fonts/ABCDiatypeCyrillic-Regular.otf") format("opentype");
+  font-family: 'ABC Diatype Cyrillic';
+  src: url('../fonts/ABCDiatypeCyrillic-Regular.otf') format('opentype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 :root {
-  --font-family: "ABC Diatype Cyrillic", system-ui, sans-serif;
+  --font-family: 'ABC Diatype Cyrillic', system-ui, sans-serif;
   --color-navy: #21395b;
   --color-gray-blue: #8c99ab;
   --color-page: #ffffff;
