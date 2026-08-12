@@ -65,7 +65,6 @@ export async function startTelegramBot(): Promise<Telegraf | null> {
   }
 
   const bot = createTelegramBot();
-  await assertBotCanCheckSubscriptions(bot);
 
   try {
     await bot.telegram.setMyCommands(BOT_COMMANDS);
@@ -74,6 +73,7 @@ export async function startTelegramBot(): Promise<Telegraf | null> {
   }
 
   await bot.launch();
+  await assertBotCanCheckSubscriptions(bot);
 
   logger.info('Telegram bot started', {
     proxyEnabled: Boolean(env.telegramProxyUrl),
